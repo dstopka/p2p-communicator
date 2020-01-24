@@ -14,7 +14,7 @@ Window {
         id: connections
         y: 0
         width: 0.3*parent.width
-        height: parent.height - 150
+        height: parent.height - 100
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.leftMargin: 0
@@ -38,7 +38,12 @@ Window {
                 }
             }
         }
-
+        Rectangle {
+            id: bgConnections
+            anchors.fill: parent
+            color: "#3b3b3b"
+            z: -1
+        }
 
 //        model: ListModel {
 //            ListElement {
@@ -68,8 +73,16 @@ Window {
         x: 0
         y: 0
         width: 0.3*parent.width
-        height: 150
-        color: "#000000"
+        height: 100
+        color: "#3b3b3b"
+        Rectangle {
+                id: borderBottomNewConnection
+                width: parent.width
+                height: 1
+                anchors.bottom: parent.bottom
+                color: "#636363"
+            }
+
     }
 
     ListView {
@@ -92,11 +105,32 @@ Window {
                 }
 
                 Text {
-                    text: name
+                    text: qsTr(name)
                     anchors.verticalCenter: parent.verticalCenter
                     font.bold: true
                 }
             }
+        }
+        Rectangle {
+            id: bgMessages
+            anchors.fill: parent
+            color: "#2e2e2e"
+            z: -1
+            Rectangle {
+                    id: borderLeftBgMessages
+                    width: 1
+                    height: parent.height
+                    anchors.left: parent.left
+                    color: "#000000"
+                }
+
+                Rectangle {
+                    id: borderRightBgMessages
+                    width: 1
+                    height: parent.height
+                    anchors.right: parent.right
+                    color: "#000000"
+                }
         }
 //        model: ListModel {
 //            ListElement {
@@ -124,7 +158,7 @@ Window {
     ListView {
         id: files
         y: 0
-        width: 128
+        width: 0.2*parent.width
         height: parent.height
         anchors.left: messages.right
         delegate: Item {
@@ -147,6 +181,13 @@ Window {
                 }
             }
         }
+        Rectangle {
+            id: bgFiles
+            anchors.fill: parent
+            color: "#3b3b3b"
+            z: -1
+        }
+
 //        model: ListModel {
 //            ListElement {
 //                name: "Grey"
