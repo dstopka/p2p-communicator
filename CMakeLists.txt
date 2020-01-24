@@ -24,9 +24,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
-find_package(Qt5 COMPONENTS Core Quick LinguistTools REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
-set(TS_FILES oop_2019_komunikator_p2p.ts)
 
 if(ANDROID)
     add_library(oop_2019_komunikator_p2p SHARED
@@ -46,5 +45,3 @@ target_compile_definitions(oop_2019_komunikator_p2p
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(oop_2019_komunikator_p2p
   PRIVATE Qt5::Core Qt5::Quick)
-
-qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
