@@ -30,13 +30,13 @@ set(TS_FILES oop_2019_komunikator_p2p.ts)
 
 if(ANDROID)
     add_library(oop_2019_komunikator_p2p SHARED
-      main.cpp
+      src/main.cpp
       qml.qrc
       ${TS_FILES}
     )
 else()
     add_executable(oop_2019_komunikator_p2p
-      main.cpp
+      src/main.cpp
       qml.qrc
       ${TS_FILES}
     )
