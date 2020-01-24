@@ -1,0 +1,49 @@
+
+@startuml
+
+class Conversation
+class Message
+class Server
+class Connection
+
+Conversation "1" *-- "many" Message : contains >
+Server "1" *-- "many" Connection : serve >
+Conversation "1" *-- "1" Connection : can have >
+
+
+class Conversation {
++void sendMessage()
++void onReceivedMessage()
++void setName(QString name)
++QString getName()
++QVector<Message> getMessages()
+-QVector<Message> messages
+-QString name
+-Connection connection
+-bool isConnected
+
+}
+
+class Message {
++QString getText()
++void setText()
+
+-QString text
+-QFile file
+-bool isSender
+}
+
+class Server {
++void makeNewConnection()
+-QTcpServer
+-QVector<Connection> activeConnections
+}
+
+class Connection {
++void onReceivedMessage()
++void onSentMessage()
+-QTcpSocket socket
+
+}
+
+@enduml
