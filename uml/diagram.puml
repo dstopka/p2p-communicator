@@ -11,13 +11,15 @@ class File
 
 MainWindow "1" *-- "many" Conversation : has many >
 MainWindow "1" *-- "1" Database : has one >
-MainWindow "1" *-- "1" Server : has many >
+MainWindow "1" *-- "1" Server : has one >
 Conversation "1" *-- "many" Message : contains >
 Conversation "1" *-- "many" File : contains >
 Server ..> Conversation : create >
 Conversation "1" *-* "1" Connection : has one >
 
 class MainWindow {
+manage everything
+..
 -std::shared_ptr<Conversation>
 currentConversation
 -QVector<Conversation>
@@ -26,6 +28,9 @@ conversations
 server
 -std::unique_ptr<Database>
 db
+--
++MainWindow(int argc,char** argv)
++void run()
 +void onChangeConversation()
 +void onNewConnection(QTcpSocket*)
 }

@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
-import QtQuick.Controls 2.13
+import QtQuick.Controls 2.12
 
 Window {
     id: window
