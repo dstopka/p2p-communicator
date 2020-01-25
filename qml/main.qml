@@ -38,7 +38,6 @@ Window {
                         height: 40
                         color: colorCode
                     }
-
                     Text {
                         text: name
                         anchors.verticalCenter: parent.verticalCenter
@@ -63,6 +62,8 @@ Window {
                      anchors.bottom: parent.bottom
                      color: "#636363"
              }
+
+
 
          }
     }
@@ -121,34 +122,27 @@ Window {
 
         ListView {
                 id: messages
-                height: parent.height-50
+                height: parent.height-70
+                width: parent.width
                 anchors.top: parent.top
-                delegate: Item {
-                    x: 5
-                    width: 80
-                    height: 40
-                    Row {
-                        id: row2
-                        spacing: 10
-                        Rectangle {
-                            width: 40
-                            height: 40
-                            color: colorCode
-                        }
-
-                        Text {
-                            text: qsTr(name)
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                    }
+                model: ListModel {
+                    id: messagesModel
                 }
+                delegate: Loader {
+                        sourceComponent: switch(msgType) {
+                                case "received" : return rcvdMsg;
+                                case "sent": return sntMsg;
+                            }
+                        property string _msg: msg
+                    }
         }
+        SentMessage{id:sntMsg}
+        ReceivedMessage{id:rcvdMsg}
 
         Rectangle {
                 id: messagesTextArea
                 width: parent.width
-                height: 50
+                height: 70
                 anchors.bottom: parent.bottom
                 color: "#2e2e2e"
                 Rectangle {
@@ -158,19 +152,29 @@ Window {
                     anchors.top: parent.top
                     color: "#636363"
                 }
+                Rectangle {
+                        id: borderLeftMessagesTextArea
+                        width: 1
+                        height: parent.height
+                        anchors.left: parent.left
+                        color: "#000000"
+                }
 
                 Rectangle {
-                    id: bgMessageInput
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: 15
-                    height: parent.height *0.8
-                    width: (parent.width-15) *0.8
-                    radius: 5
-                    color: "#242424"
+                        id: borderRightMessagesTextArea
+                        width: 1
+                        height: parent.height
+                        anchors.right: parent.right
+                        color: "#000000"
+                }
+
                     ScrollView {
-                        id: flickable
-                        anchors.fill: parent
+                        id: messageInput
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 15
+                        height: parent.height *0.67
+                        width: parent.width-70
                         TextArea {
                             id: messageArea
                             text: "Type your message..."
@@ -179,44 +183,52 @@ Window {
                             font.pixelSize: 14
                             selectByMouse: true
                             color: "#adadad"
+                            background: Rectangle {
+                                height: parent.height
+                                width: parent.width
+                                id: bgMessageInput
+                                radius: 5
+                                color: "#242424"
+                                border.color: '#1f1f1f'
+                                border.width: 1
+                            }
                             onActiveFocusChanged: {
                                 messageArea.text=""
                             }
                             Keys.onReturnPressed: {
                                 messageArea.text = ""
                             }
-                        }
                     }
                 }
-                RoundButton {
+                Rectangle {
                     id: sendButton
-                    anchors.left: bgMessageInput.right
-                    text: qsTr(">")
+                    anchors.left: messageInput.right
                     anchors.leftMargin: 15
                     anchors.verticalCenter: parent.verticalCenter
                     implicitWidth: 25
                     implicitHeight: 25
-                    contentItem: Text {
-                        text: sendButton.text
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    background: Rectangle {
-                        id: bgSendButton
-                        color: "#636363"
-                        radius: 12.5
-                        border.color: "#242424"
-                        border.width: 1
+                    color: "#636363"
+                    radius: 12.5
+                    border.color: "#242424"
+                    border.width: 1
+                    Text {
+                        text: ">"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
                     }
                     MouseArea {
                         id: sendMouseArea
                         hoverEnabled: true
                         anchors.fill: parent
                         onEntered: {
-                            bgSendButton.color = "#adadad"
+                            parent.color = "#adadad"
                         }
                         onExited: {
-                            bgSendButton.color = "#636363"
+                            parent.color = "#636363"
+                        }
+                        onClicked: {
+                            messagesModel.append({'msgType':'sent', 'msg':qsTr("...")})
+                            console.log(messagesModel.count)
                         }
                     }
                 }
