@@ -165,7 +165,7 @@ Window {
                     anchors.left: parent.left
                     anchors.leftMargin: 15
                     height: parent.height *0.8
-                    width: parent.width *0.8
+                    width: (parent.width-15) *0.8
                     radius: 5
                     color: "#242424"
                     ScrollView {
@@ -178,6 +178,7 @@ Window {
                             wrapMode: TextArea.Wrap
                             font.pixelSize: 14
                             selectByMouse: true
+                            color: "#adadad"
                             onActiveFocusChanged: {
                                 messageArea.text=""
                             }
@@ -185,13 +186,40 @@ Window {
                                 messageArea.text = ""
                             }
                         }
-
-
                     }
                 }
-
-
-
+                RoundButton {
+                    id: sendButton
+                    anchors.left: bgMessageInput.right
+                    text: qsTr(">")
+                    anchors.leftMargin: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                    implicitWidth: 25
+                    implicitHeight: 25
+                    contentItem: Text {
+                        text: sendButton.text
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    background: Rectangle {
+                        id: bgSendButton
+                        color: "#636363"
+                        radius: 12.5
+                        border.color: "#242424"
+                        border.width: 1
+                    }
+                    MouseArea {
+                        id: sendMouseArea
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        onEntered: {
+                            bgSendButton.color = "#adadad"
+                        }
+                        onExited: {
+                            bgSendButton.color = "#636363"
+                        }
+                    }
+                }
         }
 
     }
