@@ -74,32 +74,6 @@ Window {
          }
     }
 
-//        model: ListModel {
-//            ListElement {
-//                name: "Grey"
-//                colorCode: "grey"
-//            }
-
-//            ListElement {
-//                name: "Red"
-//                colorCode: "red"
-//            }
-
-//            ListElement {
-//                name: "Blue"
-//                colorCode: "blue"
-//            }
-
-//            ListElement {
-//                name: "Green"
-//                colorCode: "green"
-//            }
-//        }
-
-    //--------------------
-
-
-
     //--------------------
 
     Rectangle {
@@ -131,19 +105,33 @@ Window {
                 height: parent.height-70
                 width: parent.width
                 anchors.top: parent.top
+                spacing: 5
                 model: ListModel {
                     id: messagesModel
                 }
-                delegate: Loader {
-                        sourceComponent: switch(msgType) {
-                                case "received" : return rcvdMsg;
-                                case "sent": return sntMsg;
+                delegate: Rectangle {
+                    anchors.topMargin: 10
+                    width: messages.width * 0.6
+                    height: mssg.contentHeight +12
+                    color: msgType == 'sent' ? "#428bad" : "#4db3a3"
+                    radius: 8
+                    anchors.right: msgType == 'sent' ? parent.right : undefined
+                    anchors.left: msgType == 'received' ? parent.left : undefined
+                    anchors.rightMargin: msgType == 'sent' ? 10 : undefined
+                    anchors.leftMargin: msgType == 'received' ? 10 : undefined
+                            TextArea {
+                                anchors.fill: parent
+                                anchors.leftMargin: 5
+                                id: mssg
+                                color: 'white'
+                                text: msg
+                                font.pixelSize: 10
+                                wrapMode: Text.Wrap
+                                verticalAlignment: Text.AlignVCenter
+                                readOnly: true
                             }
-                        property string _msg: msg
                     }
         }
-        SentMessage{id:sntMsg}
-        ReceivedMessage{id:rcvdMsg}
 
         Rectangle {
                 id: messagesTextArea
@@ -183,7 +171,7 @@ Window {
                         width: parent.width-70
                         TextArea {
                             id: messageArea
-                            text: "Type your message..."
+                            placeholderText: "Type your message..."
                             verticalAlignment: TextEdit.AlignVCenter
                             wrapMode: TextArea.Wrap
                             font.pixelSize: 14
@@ -202,8 +190,9 @@ Window {
                                 messageArea.text=""
                             }
                             Keys.onReturnPressed: {
+                                if (messageArea.text != ""){
                                 messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                                messageArea.text = "Type your message..."
+                                }
                             }
                     }
                 }
@@ -234,9 +223,10 @@ Window {
                             parent.color = "#636363"
                         }
                         onClicked: {
+                            if (messageArea.text != ""){
                             messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
                             forceActiveFocus()
-                            messageArea.text = "Type your message..."
+                            }
                         }
                     }
                 }
