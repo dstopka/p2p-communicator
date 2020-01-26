@@ -9,7 +9,7 @@ Window {
     height: 480
     minimumHeight: 480
     minimumWidth: 640
-    title: qsTr("p2p chat")
+    title: "p2p chat"
 
     //--------------------
 
@@ -227,7 +227,7 @@ Window {
                             parent.color = "#636363"
                         }
                         onClicked: {
-                            messagesModel.append({'msgType':'sent', 'msg':qsTr("...")})
+                            messagesModel.append({'msgType':'sent', 'msg':messageArea.text})
                             console.log(messagesModel.count)
                         }
                     }

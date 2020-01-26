@@ -11,14 +11,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set ( SOURCES
+set (SOURCES
         src/main.cpp
         src/MainWindow.cpp
-)
+        src/Server.cpp)
 
-set( HEADERS
+set(HEADERS
         include/MainWindow.hpp
-)
+        include/Server.hpp)
 
 set( RESOURCES
         qml.qrc
