@@ -3,6 +3,7 @@
 //
 
 #include "include/Server.hpp"
+#include "QDebug"
 
 Server::Server(QObject *parent) : QObject(parent) {
     server = std::make_unique<QTcpServer>();
@@ -11,5 +12,5 @@ Server::Server(QObject *parent) : QObject(parent) {
 }
 
 void Server::makeNewConnection() {
-    //TODO
+    emit newConnection(server->nextPendingConnection());
 }

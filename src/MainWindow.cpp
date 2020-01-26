@@ -18,8 +18,23 @@ MainWindow::MainWindow(int argc, char **argv) {
                     QCoreApplication::exit(-1);
             }, Qt::QueuedConnection);
     engine->load(url);
+
+    //server = std::make_shared<Server>(); //error
+    server = new Server();
+    //connect(server,SIGNAL(newConnection(QTcpSocket*)),this,SLOT(onNewConnection(QTcpSocket*)));//error
 }
 
 int MainWindow::run() {
     return app->exec();
+}
+
+bool MainWindow::acceptConnection() {
+    //TODO
+    return true;
+}
+
+void MainWindow::onNewConnection(QTcpSocket *socket) {
+    if (acceptConnection()) {
+        //TODO
+    }
 }

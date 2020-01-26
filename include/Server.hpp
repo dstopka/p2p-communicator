@@ -18,9 +18,8 @@ private:
     std::unique_ptr<QTcpServer> server;
 
 signals:
-
+    void newConnection(QTcpSocket *);
 public slots:
-
     void makeNewConnection();
 };
 

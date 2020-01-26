@@ -14,11 +14,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set (SOURCES
         src/main.cpp
         src/MainWindow.cpp
-        src/Server.cpp)
+        src/Server.cpp src/Conversation.cpp)
 
 set(HEADERS
         include/MainWindow.hpp
-        include/Server.hpp)
+        include/Server.hpp include/Conversation.hpp)
 
 set( RESOURCES
         qml.qrc
@@ -36,7 +36,7 @@ set( RESOURCES
 #    endif()
 #endif()
 
-find_package(Qt5 COMPONENTS Core Quick REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick Network REQUIRED)
 
 
 if(ANDROID)
@@ -56,4 +56,4 @@ endif()
 target_compile_definitions(oop_2019_komunikator_p2p
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(oop_2019_komunikator_p2p
-  PRIVATE Qt5::Core Qt5::Quick)
+        PRIVATE Qt5::Core Qt5::Quick Qt5::Network)

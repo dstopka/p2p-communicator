@@ -6,6 +6,7 @@
 #define OOP_2019_KOMUNIKATOR_P2P_MAINWINDOW_HPP
 
 #include "include/Server.hpp"
+#include "include/Conversation.hpp"
 
 #include <QtCore/QObject>
 #include <QGuiApplication>
@@ -22,12 +23,18 @@ public:
 private:
     std::unique_ptr<QCoreApplication> app;
     std::unique_ptr<QQmlApplicationEngine> engine;
-    std::unique_ptr<Server> server;
+    //std::unique_ptr<Server> server;
+    Server *server;
+    std::shared_ptr<Conversation> currentConversation;
+    QVector<Conversation> conversations;
+
+    bool acceptConnection();
 
 signals:
 
 public slots:
 
+    void onNewConnection(QTcpSocket *socket);
 };
 
 

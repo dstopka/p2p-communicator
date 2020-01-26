@@ -25,7 +25,7 @@ currentConversation
 -QVector<Conversation>
 conversations
 -std::unique_ptr<Server>
-server
+tcpServer
 -std::unique_ptr<Database>
 db
 --
@@ -33,9 +33,11 @@ db
 +void run()
 +void onChangeConversation()
 +void onNewConnection(QTcpSocket*)
+-bool acceptConncetion()
 }
 
 class Conversation {
++Conversation(QTcpSocket*)
 +void sendMessage()
 +void onReceivedMessage()
 +void setName(QString name)
@@ -60,7 +62,7 @@ class Message {
 class Server {
 manage incoming connection
 ..
--QTcpServer server
+-QTcpServer tcpServer
 --
 +void makeNewConnection()
 }
