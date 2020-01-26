@@ -11,6 +11,12 @@ Window {
     minimumWidth: 640
     title: qsTr("p2p chat")
 
+    MouseArea {
+            anchors.fill: parent
+            onClicked: forceActiveFocus()
+            z:-2
+        }
+
     //--------------------
 
     Rectangle {
@@ -196,7 +202,8 @@ Window {
                                 messageArea.text=""
                             }
                             Keys.onReturnPressed: {
-                                messageArea.text = ""
+                                messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                messageArea.text = "Type your message..."
                             }
                     }
                 }
@@ -227,8 +234,9 @@ Window {
                             parent.color = "#636363"
                         }
                         onClicked: {
-                            messagesModel.append({'msgType':'sent', 'msg':qsTr("...")})
-                            console.log(messagesModel.count)
+                            messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                            forceActiveFocus()
+                            messageArea.text = "Type your message..."
                         }
                     }
                 }

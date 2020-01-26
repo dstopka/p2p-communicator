@@ -1,12 +1,15 @@
 import QtQuick 2.0
 
-Component{
-    Item {
-        Rectangle {
-                width: 100
-                height: parent.height
-                anchors.right: parent.right
-                color: "#000000"
-        }
-    }
+Component {
+    Rectangle {
+                width: messages.width * 0.8
+                height: 40
+
+                color: 'white'
+                Text {
+                    property string msg: _msg
+                    color: 'black'
+                    text: msg
+                }
+            }
 }
