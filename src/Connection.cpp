@@ -5,5 +5,18 @@
 #include "include/Connection.hpp"
 
 Connection::Connection(QTcpSocket *sock) {
-    socket = std::make_unique<QTcpSocket>(sock);
+    socket = std::unique_ptr<QTcpSocket>(sock);
+    connect(socket.get(), SIGNAL(readyRead()), this, SLOT(onReceivedData()));
+}
+
+void Connection::sendMessage(const QString &str) {
+    QTextStream stream(socket.get());
+    stream << str << "\n";
+}
+
+void Connection::onReceivedData() {
+    QTextStream stream(socket.get());
+    QString text;
+    stream >> text;
+    emit receivedMessage(text);
 }

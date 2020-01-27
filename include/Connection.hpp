@@ -12,15 +12,19 @@
 class Connection : public QObject {
 Q_OBJECT
 public:
-    Connection(QTcpSocket *);
+    void sendMessage(const QString &);
+
+    explicit Connection(QTcpSocket *);
 
 private:
     std::unique_ptr<QTcpSocket> socket;
 
 signals:
 
+    void receivedMessage(const QString &);
 public slots:
 
+    void onReceivedData();
 };
 
 #endif //OOP_2019_KOMUNIKATOR_P2P_CONNECTION_HPP

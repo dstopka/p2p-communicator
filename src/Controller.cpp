@@ -21,5 +21,21 @@ void Controller::onNewConnection(QTcpSocket *socket) {
     if (acceptConnection()) {
         currentConversation = std::make_shared<Conversation>(socket);
         conversations.push_front(currentConversation);
+        connect(currentConversation.get(), SIGNAL(newMessage(
+                                                          const QString &)), this, SLOT(onNewMessage(
+                                                                                                const QString &)));
     }
+}
+
+void Controller::sendMessage(const QString &str) {
+    currentConversation->sendMessage(str);
+}
+
+void Controller::onNewMessage(const QString &str) {
+    lastMessage = str;
+    emit newMessage();
+}
+
+const QString &Controller::getMessage() {
+    return lastMessage;
 }

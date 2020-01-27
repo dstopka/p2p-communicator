@@ -14,6 +14,8 @@ Window {
 
     Controller {
         id: controller
+
+        onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
      }
     //--------------------
 
@@ -283,6 +285,7 @@ Window {
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
                                 messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                controller.message=messageArea.text
                                 messageArea.text=""
                                 }
                             }

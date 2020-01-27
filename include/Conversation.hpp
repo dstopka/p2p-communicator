@@ -14,19 +14,20 @@
 class Conversation : public QObject {
 Q_OBJECT
 public:
-    Conversation(QTcpSocket *);
+    explicit Conversation(QTcpSocket *);
 
-    void sendMessage(QString);
+    void sendMessage(const QString &);
 
 private:
     std::unique_ptr<Connection> connection;
 
 signals:
 
-    void newMessage(QString);
+    void newMessage(const QString &);
 
 public slots:
 
+    void onReceivedMessage(const QString &);
 };
 
 
