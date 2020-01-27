@@ -7,10 +7,9 @@
 
 #include "include/Server.hpp"
 #include "include/Conversation.hpp"
+#include "include/Database.hpp"
 
 #include <QObject>
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
 #include <memory>
 
 class Controller : public QObject {
@@ -20,8 +19,9 @@ public:
 
 private:
     std::unique_ptr<Server> server;
+    std::unique_ptr<Database> database;
     std::shared_ptr<Conversation> currentConversation;
-    QVector<Conversation> conversations;
+    QList<std::shared_ptr<Conversation>> conversations;
 
     bool acceptConnection();
 

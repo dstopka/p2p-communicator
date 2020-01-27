@@ -3,3 +3,7 @@
 //
 
 #include "include/Conversation.hpp"
+
+Conversation::Conversation(QTcpSocket *socket) {
+    connection = std::make_unique<Connection>(socket);
+}

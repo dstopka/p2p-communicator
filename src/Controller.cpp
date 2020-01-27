@@ -8,6 +8,7 @@
 
 Controller::Controller() {
     server = std::make_unique<Server>();
+    database = std::make_unique<Database>();
     connect(server.get(), SIGNAL(newConnection(QTcpSocket * )), this, SLOT(onNewConnection(QTcpSocket * )));
 }
 
@@ -18,6 +19,7 @@ bool Controller::acceptConnection() {
 
 void Controller::onNewConnection(QTcpSocket *socket) {
     if (acceptConnection()) {
-        //TODO
+        currentConversation = std::make_shared<Conversation>(socket);
+        conversations.push_front(currentConversation);
     }
 }

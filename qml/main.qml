@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.12
+import pl.p2p 1.0
 
 Window {
     id: window
@@ -11,6 +12,9 @@ Window {
     minimumWidth: 640
     title: "p2p chat"
 
+    Controller {
+        id: controller
+     }
     //--------------------
 
     Rectangle {
