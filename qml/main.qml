@@ -10,7 +10,7 @@ Window {
     height: 480
     minimumHeight: 480
     minimumWidth: 640
-    title: "p2p chat"
+    title: qsTr("p2p chat")
 
     Controller {
         id: controller
@@ -27,29 +27,48 @@ Window {
         anchors.bottom: parent.bottom
         anchors.leftMargin: 0
 
+
          ListView {
             id: connections
-            anchors.fill: parent
-            delegate: Item {
-                x: 5
-                width: 80
-                height: 40
-                Row {
-                    id: row1
-                    spacing: 10
-                    Rectangle {
-                        width: 40
-                        height: 40
-                        color: colorCode
-                    }
-                    Text {
-                        text: name
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
-                    }
+            width: parent.width
+            height: parent.height - 100
+            anchors.bottom: parent.bottom
+            model: ListModel {
+                id: connectionsModel
+            }
+            delegate: Rectangle {
+                height: 50
+                width: parent.width
+                color: "#3b3b3b"
+                Rectangle {
+                      width: parent.width
+                      height: 1
+                      anchors.bottom: parent.bottom
+                      color: "#636363"
+                }
+                Label {
+                    id: aliasLabel
+                    anchors.top: parent.top
+                    text: als
+                    color: "#adadad"
+                }
+                Label {
+                    id: ipLabel
+                    anchors.top: aliasLabel.bottom
+                    text: ip + ":"
+                    color: "#adadad"
+                }
+                Label {
+                    id: portLabel
+                    anchors.top: aliasLabel.bottom
+                    anchors.left: ipLabel.right
+                    text: port
+                    color: "#adadad"
                 }
             }
-        }
+
+         }
+
 
          Rectangle {
              id: newConnection
@@ -67,35 +86,75 @@ Window {
                      color: "#636363"
              }
 
+            TextField {
+                anchors.top: parent.top
+                id: newIpInput
+                placeholderText: "Enter IP"
+                font.pixelSize: 10
+                background: Rectangle {
+                    radius: 8
+                    height: 22
+                    width: 50
+                }
+            }
+
+            TextField {
+                id: newPortInput
+                anchors.top: newIpInput.bottom
+                placeholderText: "Enter Port"
+                font.pixelSize: 10
+                background: Rectangle {
+                    radius: 8
+                    height: 22
+                }
+            }
+
+            TextField {
+                id: newAliasInput
+                anchors.top: newPortInput.bottom
+                placeholderText: "Enter name"
+                font.pixelSize: 10
+                background: Rectangle {
+                    radius: 8
+                    height: 22
+                }
+            }
+
+            Rectangle {
+                id: newConnectionButton
+                anchors.top: newAliasInput.bottom
+                implicitWidth: 50
+                implicitHeight: 25
+                color: "#636363"
+                radius: 12.5
+                border.color: "#242424"
+                border.width: 1
+                Text {
+                    text: "Connect"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                MouseArea {
+                    id: newConnectionButtonMouseArea
+                    hoverEnabled: true
+                    anchors.fill: parent
+                    onEntered: {
+                        parent.color = "#adadad"
+                    }
+                    onExited: {
+                        parent.color = "#636363"
+                    }
+                    onClicked: {
+//                        if (messageArea.text != ""){
+                        connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text})
+//                        messageArea.text=""
+                        }
+                    }
+                }
+            }
 
 
          }
-    }
-
-//        model: ListModel {
-//            ListElement {
-//                name: "Grey"
-//                colorCode: "grey"
-//            }
-
-//            ListElement {
-//                name: "Red"
-//                colorCode: "red"
-//            }
-
-//            ListElement {
-//                name: "Blue"
-//                colorCode: "blue"
-//            }
-
-//            ListElement {
-//                name: "Green"
-//                colorCode: "green"
-//            }
-//        }
-
-    //--------------------
-
 
 
     //--------------------
@@ -123,25 +182,47 @@ Window {
                 anchors.right: parent.right
                 color: "#000000"
         }
+        ScrollView {
+            height: parent.height - 80
+            width: parent.width
+            anchors.top: parent.top
 
-        ListView {
+            ListView {
                 id: messages
-                height: parent.height-70
-                width: parent.width
-                anchors.top: parent.top
+                anchors.fill: parent
+                spacing: 5
                 model: ListModel {
                     id: messagesModel
                 }
-                delegate: Loader {
-                        sourceComponent: switch(msgType) {
-                                case "received" : return rcvdMsg;
-                                case "sent": return sntMsg;
+                delegate: Rectangle {
+                    anchors.topMargin: 10
+                    width: messages.width * 0.6
+                    height: mssg.contentHeight + 12
+                    color: msgType == 'sent' ? "#428bad" : "#4db3a3"
+                    radius: 8
+                    anchors.right: msgType == 'sent' ? parent.right : undefined
+                    anchors.left: msgType == 'received' ? parent.left : undefined
+                    anchors.rightMargin: msgType == 'sent' ? 10 : undefined
+                    anchors.leftMargin: msgType == 'received' ? 10 : undefined
+                            TextArea {
+                                anchors.fill: parent
+                                anchors.leftMargin: 5
+                                id: mssg
+                                color: 'white'
+                                text: msg
+                                font.pixelSize: 10
+                                wrapMode: Text.Wrap
+                                verticalAlignment: Text.AlignVCenter
+                                readOnly: true
                             }
-                        property string _msg: msg
                     }
+                onCountChanged: {
+                               var newIndex = count - 1 // last index
+                               positionViewAtEnd()
+                               currentIndex = newIndex
+                           }
+                }
         }
-        SentMessage{id:sntMsg}
-        ReceivedMessage{id:rcvdMsg}
 
         Rectangle {
                 id: messagesTextArea
@@ -181,7 +262,7 @@ Window {
                         width: parent.width-70
                         TextArea {
                             id: messageArea
-                            text: "Type your message..."
+                            placeholderText: "Type your message..."
                             verticalAlignment: TextEdit.AlignVCenter
                             wrapMode: TextArea.Wrap
                             font.pixelSize: 14
@@ -196,11 +277,14 @@ Window {
                                 border.color: '#1f1f1f'
                                 border.width: 1
                             }
-                            onActiveFocusChanged: {
-                                messageArea.text=""
-                            }
+                            //onActiveFocusChanged: {
+                            //    messageArea.text=""
+                            //}
                             Keys.onReturnPressed: {
-                                messageArea.text = ""
+                                if (messageArea.text != ""){
+                                messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                messageArea.text=""
+                                }
                             }
                     }
                 }
@@ -231,8 +315,11 @@ Window {
                             parent.color = "#636363"
                         }
                         onClicked: {
-                            messagesModel.append({'msgType':'sent', 'msg':messageArea.text})
-                            console.log(messagesModel.count)
+                            if (messageArea.text != ""){
+                            messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                            messageArea.text=""
+                            //forceActiveFocus()
+                            }
                         }
                     }
                 }
