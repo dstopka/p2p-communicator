@@ -6,7 +6,7 @@
 #define OOP_2019_KOMUNIKATOR_P2P_CONVERSATION_HPP
 
 
-#include <QtCore/QObject>
+#include <QObject>
 
 class Conversation : public QObject {
 Q_OBJECT

@@ -4,6 +4,7 @@
 
 
 #include "include/MainWindow.hpp"
+#include <QDebug>
 
 MainWindow::MainWindow(int argc, char **argv) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -19,9 +20,8 @@ MainWindow::MainWindow(int argc, char **argv) {
             }, Qt::QueuedConnection);
     engine->load(url);
 
-    //server = std::make_shared<Server>(); //error
-    server = new Server();
-    //connect(server,SIGNAL(newConnection(QTcpSocket*)),this,SLOT(onNewConnection(QTcpSocket*)));//error
+    server = std::make_unique<Server>();
+    connect(server.get(), SIGNAL(newConnection(QTcpSocket * )), this, SLOT(onNewConnection(QTcpSocket * )));
 }
 
 int MainWindow::run() {

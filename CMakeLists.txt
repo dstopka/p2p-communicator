@@ -14,11 +14,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set (SOURCES
         src/main.cpp
         src/MainWindow.cpp
-        src/Server.cpp src/Conversation.cpp)
+        src/Server.cpp
+        src/Conversation.cpp
+        src/Connection.cpp
+        src/Database.cpp
+        src/Message.cpp src/File.cpp)
 
 set(HEADERS
         include/MainWindow.hpp
-        include/Server.hpp include/Conversation.hpp)
+        include/Server.hpp
+        include/Conversation.hpp
+        include/Connection.hpp
+        include/Database.hpp
+        include/Message.hpp include/File.hpp)
 
 set( RESOURCES
         qml.qrc

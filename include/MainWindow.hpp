@@ -8,7 +8,7 @@
 #include "include/Server.hpp"
 #include "include/Conversation.hpp"
 
-#include <QtCore/QObject>
+#include <QObject>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <memory>
@@ -23,8 +23,7 @@ public:
 private:
     std::unique_ptr<QCoreApplication> app;
     std::unique_ptr<QQmlApplicationEngine> engine;
-    //std::unique_ptr<Server> server;
-    Server *server;
+    std::unique_ptr<Server> server;
     std::shared_ptr<Conversation> currentConversation;
     QVector<Conversation> conversations;
 
