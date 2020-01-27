@@ -2,6 +2,8 @@ import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.13
 
+//---------MAIN WINDOW---------------
+
 Window {
     id: window
     visible: true
@@ -11,7 +13,7 @@ Window {
     minimumWidth: 640
     title: qsTr("p2p chat")
 
-    //--------------------
+    //---------CONNECTIONS PANNEL---------------
 
     Rectangle {
         id: bgConnections
@@ -23,6 +25,7 @@ Window {
         anchors.bottom: parent.bottom
         anchors.leftMargin: 0
 
+        //---------CONNECTIONS LIST---------------
 
          ListView {
             id: connections
@@ -65,6 +68,7 @@ Window {
 
          }
 
+        //---------NEW CONNECTION---------------
 
          Rectangle {
              id: newConnection
@@ -82,53 +86,103 @@ Window {
                      color: "#636363"
              }
 
-            TextField {
+
+             Label {
+                id: newConnectionLabel
+                text: "New connection"
+                color: 'white'
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
+                anchors.topMargin: 3
+             }
+
+
+             TextField {
+                 id: newAliasInput
+                 anchors.top: newConnectionLabel.bottom
+                 anchors.topMargin: 3
+                 anchors.horizontalCenter: parent.horizontalCenter
+                 width: parent.width * 0.8
+                 height: 22
+                 placeholderText: "Name"
+                 font.pixelSize: 10
+                 verticalAlignment: TextInput.AlignVCenter
+                 horizontalAlignment: TextInput.AlignHCenter
+                 color: "#adadad"
+                 background: Rectangle {
+                     radius: 8
+                     color: "#2e2e2e"
+                     border.color: "#242424"
+                     border.width: 1
+                 }
+             }
+
+
+
+            TextField {                
                 id: newIpInput
-                placeholderText: "Enter IP"
+                anchors.top: newAliasInput.bottom
+                anchors.topMargin: 3
+                anchors.left: parent.left
+                anchors.leftMargin: parent.width*0.1
+                placeholderText: "IP Adress"
+                height: 22
+                width: parent.width * 0.55 -1
                 font.pixelSize: 10
+                verticalAlignment: TextInput.AlignVCenter
+                horizontalAlignment: TextInput.AlignHCenter
+                color: "#adadad"
+                validator: RegExpValidator { regExp: /([0-9]{1,3}\.){3}[0-9]{1,3}/ }
                 background: Rectangle {
                     radius: 8
-                    height: 22
-                    width: 50
+                    color: "#2e2e2e"
+                    border.color: "#242424"
+                    border.width: 1
                 }
             }
+
 
             TextField {
                 id: newPortInput
-                anchors.top: newIpInput.bottom
-                placeholderText: "Enter Port"
+                anchors.top: newAliasInput.bottom
+                anchors.topMargin: 3
+                anchors.left: newIpInput.right
+                anchors.leftMargin: 2
+                placeholderText: "Port"
+                height: 22
+                width: parent.width * 0.25 -1
                 font.pixelSize: 10
+                verticalAlignment: TextInput.AlignVCenter
+                horizontalAlignment: TextInput.AlignHCenter
+                color: "#adadad"
+                validator: RegExpValidator { regExp: /[0-9]{1,5}/ }
                 background: Rectangle {
                     radius: 8
-                    height: 22
+                    color: "#2e2e2e"
+                    border.color: "#242424"
+                    border.width: 1
                 }
             }
 
-            TextField {
-                id: newAliasInput
-                anchors.top: newPortInput.bottom
-                placeholderText: "Enter name"
-                font.pixelSize: 10
-                background: Rectangle {
-                    radius: 8
-                    height: 22
-                }
-            }
 
             Rectangle {
                 id: newConnectionButton
-                anchors.top: newAliasInput.bottom
-                implicitWidth: 50
-                implicitHeight: 25
+                anchors.top: newPortInput.bottom
+                anchors.topMargin: 3
+                anchors.horizontalCenter: parent.horizontalCenter
+                implicitWidth: newConnectionButtonText.contentWidth + 20
+                implicitHeight: 22
                 color: "#636363"
-                radius: 12.5
+                radius: 8
                 border.color: "#242424"
                 border.width: 1
                 Text {
+                    id: newConnectionButtonText
                     text: "Connect"
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 10
+                    color: '#ffffff'
                 }
                 MouseArea {
                     id: newConnectionButtonMouseArea
@@ -136,14 +190,15 @@ Window {
                     anchors.fill: parent
                     onEntered: {
                         parent.color = "#adadad"
+                        newConnectionButtonText.color = "#242424"
                     }
                     onExited: {
                         parent.color = "#636363"
+                        newConnectionButtonText.color = "#ffffff"
                     }
                     onClicked: {
-//                        if (messageArea.text != ""){
-                        connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text})
-//                        messageArea.text=""
+                        if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                            connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text})
                         }
                     }
                 }
@@ -153,7 +208,7 @@ Window {
          }
 
 
-    //--------------------
+    //---------MESSAGES PANNEL---------------
 
     Rectangle {
         id: bgMessages
@@ -178,6 +233,9 @@ Window {
                 anchors.right: parent.right
                 color: "#000000"
         }
+
+        //---------MESSAGES LIST---------------
+
         ScrollView {
             height: parent.height - 80
             width: parent.width
@@ -219,6 +277,8 @@ Window {
                            }
                 }
         }
+
+        //---------MESSAGES INPUT---------------
 
         Rectangle {
                 id: messagesTextArea
@@ -323,7 +383,7 @@ Window {
 
     }
 
-    //--------------------
+    //---------SENT FILES PANNEL---------------
 
     Rectangle {
         id: bgFiles
