@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
-import QtQuick.Controls 2.13
+import QtQuick.Controls 2.3
 
 //---------MAIN WINDOW---------------
 
@@ -45,24 +45,93 @@ Window {
                       anchors.bottom: parent.bottom
                       color: "#636363"
                 }
-                Label {
-                    id: aliasLabel
+                Rectangle {
+                    id: logoType
+                    height: 40
+                    width: 40
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    radius: 20
+                    color: Qt.rgba(Math.random(),Math.random(),Math.random(), 1)
+                    border.color: "#2e2e2e"
+                    border.width: 1
+                    Label {
+                        anchors.fill: parent
+                        font.pixelSize: 30
+                        font.bold: true
+                        text: als[0].toUpperCase()
+                        color: '#ffffff'
+                        verticalAlignment: TextInput.AlignVCenter
+                        horizontalAlignment: TextInput.AlignHCenter
+                    }
+                }
+
+                Rectangle {
+                    anchors.left: logoType.right
                     anchors.top: parent.top
-                    text: als
-                    color: "#adadad"
-                }
-                Label {
-                    id: ipLabel
-                    anchors.top: aliasLabel.bottom
-                    text: ip + ":"
-                    color: "#adadad"
-                }
-                Label {
-                    id: portLabel
-                    anchors.top: aliasLabel.bottom
-                    anchors.left: ipLabel.right
-                    text: port
-                    color: "#adadad"
+                    height: parent.height-1
+                    width: parent.width-50
+                    color: "#3b3b3b"
+                    Label {
+                        id: aliasLabel
+                        anchors.top: parent.top
+                        anchors.topMargin: 2
+                        text: als
+                        color: "#adadad"
+                        font.bold: true
+                        font.pixelSize: 16
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+                    Label {
+                        id: ipPortLabel
+                        anchors.top: aliasLabel.bottom
+                        anchors.topMargin: 2
+                        text: ip + ":" + port
+                        color: "#adadad"
+                        font.pixelSize: 10
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+
+                    Rectangle {
+                        id: connectionIdenticator
+                        visible: connected ? false : true
+                        color: '#ff0000'
+                        width: 8
+                        height: 8
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 3
+                        radius: 4
+                        SequentialAnimation {
+                            running: true
+                            loops: Animation.Infinite
+                            PropertyAnimation {
+                             target: connectionIdenticator
+                                property: "opacity"
+                                from: 0.0
+                                to: 1.0
+                                duration: 1000
+                            }
+                            PropertyAnimation {
+                                target: connectionIdenticator
+                                property: "opacity"
+                                from: 1.0
+                                to: 0.0
+                                duration: 1000
+                            }
+                        }
+                    }
+                    Rectangle {
+                        visible: connected ? true : false
+                        color: '#00ff00'
+                        width: 8
+                        height: 8
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 3
+                        radius: 4
+                    }
                 }
             }
 
@@ -179,8 +248,7 @@ Window {
                 Text {
                     id: newConnectionButtonText
                     text: "Connect"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.centerIn: parent
                     font.pixelSize: 10
                     color: '#ffffff'
                 }
@@ -198,7 +266,10 @@ Window {
                     }
                     onClicked: {
                         if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
-                            connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text})
+                            connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
+                            newIpInput.text = ""
+                            newAliasInput.text = ""
+                            newPortInput.text = ""
                         }
                     }
                 }
@@ -272,9 +343,9 @@ Window {
                     }
                 onCountChanged: {
                                var newIndex = count - 1 // last index
-                               positionViewAtEnd()
-                               currentIndex = newIndex
-                           }
+                    positionViewAtEnd()
+                    currentIndex = newIndex
+                }
                 }
         }
 
@@ -357,8 +428,7 @@ Window {
                     border.width: 1
                     Text {
                         text: ">"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.centerIn: parent
                     }
                     MouseArea {
                         id: sendMouseArea
