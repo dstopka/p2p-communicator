@@ -1,7 +1,7 @@
 
 @startuml
 
-class MainWindow
+class Controller
 class Database
 class Conversation
 class Message
@@ -9,15 +9,15 @@ class Server
 class Connection
 class File
 
-MainWindow "1" *-- "many" Conversation : has many >
-MainWindow "1" *-- "1" Database : has one >
-MainWindow "1" *-- "1" Server : has one >
+Controller "1" *-- "many" Conversation : has many >
+Controller "1" *-- "1" Database : has one >
+Controller "1" *-- "1" Server : has one >
 Conversation "1" *-- "many" Message : contains >
 Conversation "1" *-- "many" File : contains >
 Server ..> Conversation : create >
 Conversation "1" *-* "1" Connection : has one >
 
-class MainWindow {
+class Controller {
 manage everything
 ..
 -std::shared_ptr<Conversation>
@@ -29,8 +29,7 @@ tcpServer
 -std::unique_ptr<Database>
 db
 --
-+MainWindow(int argc,char** argv)
-+void run()
++Controller()
 +void onChangeConversation()
 +void onNewConnection(QTcpSocket*)
 -bool acceptConncetion()
