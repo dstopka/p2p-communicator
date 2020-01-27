@@ -11,12 +11,6 @@ Window {
     minimumWidth: 640
     title: qsTr("p2p chat")
 
-    MouseArea {
-            anchors.fill: parent
-            onClicked: forceActiveFocus()
-            z:-2
-        }
-
     //--------------------
 
     Rectangle {
@@ -32,28 +26,45 @@ Window {
 
          ListView {
             id: connections
-            anchors.fill: parent
-            delegate: Item {
-                x: 5
-                width: 80
-                height: 40
-                Row {
-                    id: row1
-                    spacing: 10
-                    Rectangle {
-                        width: 40
-                        height: 40
-                        color: colorCode
-                    }
-                    Text {
-                        text: name
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
-                    }
+            width: parent.width
+            height: parent.height - 100
+            anchors.bottom: parent.bottom
+            model: ListModel {
+                id: connectionsModel
+            }
+            delegate: Rectangle {
+                height: 50
+                width: parent.width
+                color: "#3b3b3b"
+                Rectangle {
+                      width: parent.width
+                      height: 1
+                      anchors.bottom: parent.bottom
+                      color: "#636363"
                 }
+                Label {
+                    id: aliasLabel
+                    anchors.top: parent.top
+                    text: als
+                    color: "#adadad"
+                }
+                Label {
+                    id: ipLabel
+                    anchors.top: aliasLabel.bottom
+                    text: ip + ":"
+                    color: "#adadad"
+                }
+                Label {
+                    id: portLabel
+                    anchors.top: aliasLabel.bottom
+                    anchors.left: ipLabel.right
+                    text: port
+                    color: "#adadad"
+                }
+            }
 
          }
-        }
+
 
          Rectangle {
              id: newConnection
@@ -131,7 +142,7 @@ Window {
                     }
                     onClicked: {
 //                        if (messageArea.text != ""){
-//                        messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                        connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text})
 //                        messageArea.text=""
                         }
                     }
