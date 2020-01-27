@@ -1,0 +1,83 @@
+
+@startuml
+
+class MainWindow
+class Database
+class Conversation
+class Message
+class Server
+class Connection
+class File
+
+MainWindow "1" *-- "many" Conversation : has many >
+MainWindow "1" *-- "1" Database : has one >
+MainWindow "1" *-- "1" Server : has many >
+Conversation "1" *-- "many" Message : contains >
+Conversation "1" *-- "many" File : contains >
+Server ..> Conversation : create >
+Conversation "1" *-* "1" Connection : has one >
+
+class MainWindow {
+-std::shared_ptr<Conversation>
+currentConversation
+-QVector<Conversation>
+conversations
+-std::unique_ptr<Server>
+server
+-std::unique_ptr<Database>
+db
++void onChangeConversation()
++void onNewConnection(QTcpSocket*)
+}
+
+class Conversation {
++void sendMessage()
++void onReceivedMessage()
++void setName(QString name)
++QString getName()
++QVector<Message> getMessages()
++QVector<File> getFiles()
+-QVector<Message> messages
+-QVector<File> files
+-QString name
+-std::unique_ptr<Connection>
+connection
+-bool isConnected
+}
+
+class Message {
++QString getText()
++void setText()
+-QString text
+-bool isSender
+}
+
+class Server {
+manage incoming connection
+..
+-QTcpServer server
+--
++void makeNewConnection()
+}
+
+class Connection {
++void onReceivedMessage()
++void onSentMessage()
+-QTcpSocket socket
+}
+
+class File {
++QString getName()
+-QFile file
+-bool isSender
+}
+
+class Database {
+-std::unique_ptr<QSqlDatabase>
+db
++void storeConversation(conversation)
+-void storeMessage(Message)
+-void storeFile(File)
+}
+
+@enduml
