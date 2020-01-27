@@ -29,6 +29,7 @@ Window {
         anchors.bottom: parent.bottom
         anchors.leftMargin: 0
 
+
          ListView {
             id: connections
             anchors.fill: parent
@@ -50,7 +51,8 @@ Window {
                         font.bold: true
                     }
                 }
-            }
+
+         }
         }
 
          Rectangle {
@@ -69,10 +71,76 @@ Window {
                      color: "#636363"
              }
 
+            TextField {
+                anchors.top: parent.top
+                id: newIpInput
+                placeholderText: "Enter IP"
+                font.pixelSize: 10
+                background: Rectangle {
+                    radius: 8
+                    height: 22
+                    width: 50
+                }
+            }
+
+            TextField {
+                id: newPortInput
+                anchors.top: newIpInput.bottom
+                placeholderText: "Enter Port"
+                font.pixelSize: 10
+                background: Rectangle {
+                    radius: 8
+                    height: 22
+                }
+            }
+
+            TextField {
+                id: newAliasInput
+                anchors.top: newPortInput.bottom
+                placeholderText: "Enter name"
+                font.pixelSize: 10
+                background: Rectangle {
+                    radius: 8
+                    height: 22
+                }
+            }
+
+            Rectangle {
+                id: newConnectionButton
+                anchors.top: newAliasInput.bottom
+                implicitWidth: 50
+                implicitHeight: 25
+                color: "#636363"
+                radius: 12.5
+                border.color: "#242424"
+                border.width: 1
+                Text {
+                    text: "Connect"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                MouseArea {
+                    id: newConnectionButtonMouseArea
+                    hoverEnabled: true
+                    anchors.fill: parent
+                    onEntered: {
+                        parent.color = "#adadad"
+                    }
+                    onExited: {
+                        parent.color = "#636363"
+                    }
+                    onClicked: {
+//                        if (messageArea.text != ""){
+//                        messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+//                        messageArea.text=""
+                        }
+                    }
+                }
+            }
 
 
          }
-    }
+
 
     //--------------------
 
@@ -99,12 +167,14 @@ Window {
                 anchors.right: parent.right
                 color: "#000000"
         }
+        ScrollView {
+            height: parent.height - 80
+            width: parent.width
+            anchors.top: parent.top
 
-        ListView {
+            ListView {
                 id: messages
-                height: parent.height-70
-                width: parent.width
-                anchors.top: parent.top
+                anchors.fill: parent
                 spacing: 5
                 model: ListModel {
                     id: messagesModel
@@ -112,7 +182,7 @@ Window {
                 delegate: Rectangle {
                     anchors.topMargin: 10
                     width: messages.width * 0.6
-                    height: mssg.contentHeight +12
+                    height: mssg.contentHeight + 12
                     color: msgType == 'sent' ? "#428bad" : "#4db3a3"
                     radius: 8
                     anchors.right: msgType == 'sent' ? parent.right : undefined
@@ -131,6 +201,12 @@ Window {
                                 readOnly: true
                             }
                     }
+                onCountChanged: {
+                               var newIndex = count - 1 // last index
+                               positionViewAtEnd()
+                               currentIndex = newIndex
+                           }
+                }
         }
 
         Rectangle {
@@ -186,12 +262,13 @@ Window {
                                 border.color: '#1f1f1f'
                                 border.width: 1
                             }
-                            onActiveFocusChanged: {
-                                messageArea.text=""
-                            }
+                            //onActiveFocusChanged: {
+                            //    messageArea.text=""
+                            //}
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
                                 messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                messageArea.text=""
                                 }
                             }
                     }
@@ -225,7 +302,8 @@ Window {
                         onClicked: {
                             if (messageArea.text != ""){
                             messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                            forceActiveFocus()
+                            messageArea.text=""
+                            //forceActiveFocus()
                             }
                         }
                     }
