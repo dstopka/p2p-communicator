@@ -277,7 +277,7 @@ Window {
                     }
                     onClicked: {
                         if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
-                            connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
+                            //connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
                             controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
                             newIpInput.text = ""
                             newAliasInput.text = ""
