@@ -211,7 +211,7 @@ Window {
                 verticalAlignment: TextInput.AlignVCenter
                 horizontalAlignment: TextInput.AlignHCenter
                 color: "#adadad"
-                validator: RegExpValidator { regExp: /(([0-9]{1,3}\.){3}[0-9]{1,3} | localhost)/ }
+                validator: RegExpValidator { regExp: /([0-9]{1,3}\.){3}[0-9]{1,3}/ }
                 background: Rectangle {
                     radius: 8
                     color: "#2e2e2e"
