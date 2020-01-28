@@ -22,9 +22,8 @@ void Connection::onReceivedData() {
     if (c == 'm') {
         QString str;
         stream >> str;
-        emit receivedMessage(std::make_shared<Message>(str));
+        emit receivedMessage(std::make_shared<Message>(str,false));
     }
-
 }
 
 void Connection::sendMessage(const std::shared_ptr<Message> &msg) {

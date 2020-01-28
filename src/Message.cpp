@@ -18,7 +18,7 @@ bool Message::isSender() {
     return sender;
 }
 
-Message::Message(QString str) : text(std::move(str)) {
+Message::Message(QString str, bool sent): text(std::move(str)), sender(sent) {
 
 };
 

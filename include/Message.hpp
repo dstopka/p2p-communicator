@@ -20,7 +20,7 @@ Q_OBJECT
                        isSender)
 
 public:
-    explicit Message(QString str);
+    explicit Message(QString str, bool sent);
 
     QString getText();
 
@@ -31,7 +31,7 @@ public:
 
 private:
     QString text;
-    bool sender{};
+    bool sender;
 
 signals:
 

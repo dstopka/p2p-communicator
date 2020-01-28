@@ -23,7 +23,7 @@ Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(
 }
 
 void Conversation::sendMessage(const QString &str) {
-    std::shared_ptr<Message> msg = std::make_shared<Message>(str);
+    std::shared_ptr<Message> msg = std::make_shared<Message>(str,true);
     messages.push_back(msg);
     connection->sendMessage(msg);
 }
@@ -33,6 +33,7 @@ QString Conversation::getName() {
 }
 
 void Conversation::onReceivedMessage(const std::shared_ptr<Message> &msg) {
+    messages.push_back(msg);
     emit newMessage(msg->getText());
 }
 
