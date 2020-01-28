@@ -23,7 +23,7 @@ public:
     Controller();
 
     void sendMessage(const QString &str);
-
+    Q_INVOKABLE void createNewConnection(QString name, const QString& ip, qint16 port);
     const QString &getMessage();
 
 private:

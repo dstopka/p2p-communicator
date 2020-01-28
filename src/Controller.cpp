@@ -33,6 +33,11 @@ void Controller::sendMessage(const QString &str) {
         currentConversation->sendMessage(str);
 }
 
+void Controller::createNewConnection(QString name, const QString &ip, qint16 port)
+{
+    qDebug() << name << ip << port;
+}
+
 void Controller::onNewMessage(const QString &str) {
     lastMessage = str;
     emit newMessage();
