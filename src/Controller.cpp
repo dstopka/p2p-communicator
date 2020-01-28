@@ -19,16 +19,16 @@ bool Controller::acceptConnection() {
 
 void Controller::onNewConnection(QTcpSocket *socket) {
     if (acceptConnection()) {
-        currentConversation = std::make_shared<Conversation>(socket);
+        currentConversation = std::make_shared<Conversation>("name", socket);
         conversations.push_front(currentConversation);
-        connect(currentConversation.get(), SIGNAL(newMessage(
-                                                          const QString &)), this, SLOT(onNewMessage(
-                                                                                                const QString &)));
+        connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
+                this, SLOT(onNewMessage(const QString &)));
     }
 }
 
 void Controller::sendMessage(const QString &str) {
-    currentConversation->sendMessage(str);
+    if (currentConversation != nullptr)
+        currentConversation->sendMessage(str);
 }
 
 void Controller::onNewMessage(const QString &str) {

@@ -16,6 +16,8 @@ public:
 
     explicit Connection(QTcpSocket *);
 
+    explicit Connection(const QString &ip, qint16 port);
+
 private:
     std::unique_ptr<QTcpSocket> socket;
 

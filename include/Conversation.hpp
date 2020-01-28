@@ -14,12 +14,17 @@
 class Conversation : public QObject {
 Q_OBJECT
 public:
-    explicit Conversation(QTcpSocket *);
+    explicit Conversation(QString name, QTcpSocket *);
+
+    explicit Conversation(QString name, const QString& ip, qint16 port);
 
     void sendMessage(const QString &);
 
+    QString getName();
+
 private:
     std::unique_ptr<Connection> connection;
+    QString name;
 
 signals:
 

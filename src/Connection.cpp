@@ -20,3 +20,8 @@ void Connection::onReceivedData() {
     stream >> text;
     emit receivedMessage(text);
 }
+
+Connection::Connection(const QString &ip, qint16 port) {
+    socket = std::make_unique<QTcpSocket>();
+    socket->connectToHost(ip, port);
+}

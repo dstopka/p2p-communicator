@@ -16,7 +16,7 @@ class Controller : public QObject {
 Q_OBJECT
     Q_PROPERTY(QString message
                        WRITE
-                               sendMessage
+                       sendMessage
                        READ
                        getMessage)
 public:

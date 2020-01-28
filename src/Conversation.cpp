@@ -4,11 +4,18 @@
 
 #include "include/Conversation.hpp"
 
-Conversation::Conversation(QTcpSocket *socket) {
+#include <utility>
+
+Conversation::Conversation(QString name, QTcpSocket *socket) : name(std::move(name)) {
     connection = std::make_unique<Connection>(socket);
-    connect(connection.get(), SIGNAL(receivedMessage(
-                                             const QString &)), this, SLOT(onReceivedMessage(
-                                                                                   const QString &)));
+    connect(connection.get(), SIGNAL(receivedMessage(const QString &)),
+            this, SLOT(onReceivedMessage(const QString &)));
+}
+
+Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(std::move(name)) {
+    connection = std::make_unique<Connection>(ip, port);
+    connect(connection.get(), SIGNAL(receivedMessage(const QString &)),
+            this, SLOT(onReceivedMessage(const QString &)));
 }
 
 void Conversation::sendMessage(const QString &str) {
@@ -18,3 +25,9 @@ void Conversation::sendMessage(const QString &str) {
 void Conversation::onReceivedMessage(const QString &str) {
     emit newMessage(str);
 }
+
+QString Conversation::getName() {
+    return name;
+}
+
+
