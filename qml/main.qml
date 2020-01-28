@@ -18,6 +18,7 @@ Window {
         id: controller
 
         onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
+        onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':true})
      }
     //---------CONNECTIONS PANNEL---------------
 

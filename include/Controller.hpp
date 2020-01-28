@@ -38,6 +38,7 @@ private:
 signals:
 
     void newMessage();
+    void newConnection(QString ipAdress, QString port, QString name);
 
 public slots:
 
