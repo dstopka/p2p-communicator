@@ -8,26 +8,33 @@
 
 Conversation::Conversation(QString name, QTcpSocket *socket) : name(std::move(name)) {
     connection = std::make_unique<Connection>(socket);
-    connect(connection.get(), SIGNAL(receivedMessage(const QString &)),
-            this, SLOT(onReceivedMessage(const QString &)));
+    connect(connection.get(), SIGNAL(receivedMessage(
+                                             const std::shared_ptr<Message> &)),
+            this, SLOT(onReceivedMessage(
+                               const std::shared_ptr<Message> &)));
 }
 
 Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(std::move(name)) {
     connection = std::make_unique<Connection>(ip, port);
-    connect(connection.get(), SIGNAL(receivedMessage(const QString &)),
-            this, SLOT(onReceivedMessage(const QString &)));
+    connect(connection.get(), SIGNAL(receivedMessage(
+                                             const std::shared_ptr<Message> &)),
+            this, SLOT(onReceivedMessage(
+                               const std::shared_ptr<Message> &)));
 }
 
 void Conversation::sendMessage(const QString &str) {
-    connection->sendMessage(str);
-}
-
-void Conversation::onReceivedMessage(const QString &str) {
-    emit newMessage(str);
+    std::shared_ptr<Message> msg = std::make_shared<Message>(str,true);
+    messages.push_back(msg);
+    connection->sendMessage(msg);
 }
 
 QString Conversation::getName() {
     return name;
+}
+
+void Conversation::onReceivedMessage(const std::shared_ptr<Message> &msg) {
+    messages.push_back(msg);
+    emit newMessage(msg->getText());
 }
 
 

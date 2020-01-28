@@ -20,15 +20,27 @@ bool Controller::acceptConnection() {
 void Controller::onNewConnection(QTcpSocket *socket) {
     if (acceptConnection()) {
         currentConversation = std::make_shared<Conversation>("name", socket);
+
         conversations.push_front(currentConversation);
         connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
                 this, SLOT(onNewMessage(const QString &)));
+        emit newConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
     }
+
 }
 
 void Controller::sendMessage(const QString &str) {
     if (currentConversation != nullptr)
         currentConversation->sendMessage(str);
+}
+
+void Controller::createNewConnection(QString name, const QString &ip, qint16 port)
+{
+    currentConversation = std::make_shared<Conversation>(name, ip, port);
+    conversations.push_front(currentConversation);
+    connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
+            this, SLOT(onNewMessage(const QString &)));
+    emit newConnection(ip, QString::number(port), name);
 }
 
 void Controller::onNewMessage(const QString &str) {

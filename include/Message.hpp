@@ -9,9 +9,29 @@
 
 class Message : public QObject {
 Q_OBJECT
+
+    Q_PROPERTY(QString text
+                       READ
+                               getText
+                       WRITE
+                       setText)
+    Q_PROPERTY(bool sender
+                       READ
+                       isSender)
+
 public:
+    explicit Message(QString str, bool sent);
+
+    QString getText();
+
+    void setText(QString text);
+
+    bool isSender();
+
 
 private:
+    QString text;
+    bool sender;
 
 signals:
 

@@ -6,6 +6,7 @@
 #define OOP_2019_KOMUNIKATOR_P2P_CONVERSATION_HPP
 
 #include "include/Connection.hpp"
+#include "include/Message.hpp"
 
 #include <QObject>
 #include <QTcpSocket>
@@ -18,11 +19,12 @@ public:
 
     explicit Conversation(QString name, const QString& ip, qint16 port);
 
-    void sendMessage(const QString &);
+    void sendMessage(const QString &str);
 
     QString getName();
 
 private:
+    QVector<std::shared_ptr<Message>> messages;
     std::unique_ptr<Connection> connection;
     QString name;
 
@@ -32,7 +34,7 @@ signals:
 
 public slots:
 
-    void onReceivedMessage(const QString &);
+    void onReceivedMessage(const std::shared_ptr<Message> &);
 };
 
 

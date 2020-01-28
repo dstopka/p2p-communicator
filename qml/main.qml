@@ -18,6 +18,7 @@ Window {
         id: controller
 
         onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
+        onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':true})
      }
     //---------CONNECTIONS PANNEL---------------
 
@@ -276,7 +277,8 @@ Window {
                     }
                     onClicked: {
                         if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
-                            connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
+                            //connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
+                            controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
                             newIpInput.text = ""
                             newAliasInput.text = ""
                             newPortInput.text = ""
