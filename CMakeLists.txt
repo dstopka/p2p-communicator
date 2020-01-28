@@ -8,9 +8,33 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set (SOURCES
+        src/main.cpp
+        src/Controller.cpp
+        src/Server.cpp
+        src/Conversation.cpp
+        src/Connection.cpp
+        src/Database.cpp
+        src/Message.cpp
+        src/File.cpp
+        )
+
+set(HEADERS
+        include/Controller.hpp
+        include/Server.hpp
+        include/Conversation.hpp
+        include/Connection.hpp
+        include/Database.hpp
+        include/Message.hpp
+        include/File.hpp
+        )
+
+set( RESOURCES
+        qml.qrc
+)
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
 # Check http://doc.qt.io/qt-5/deployment-android.html for more information.
 # They need to be set before the find_package(Qt5 ...) call.
@@ -24,24 +48,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
-find_package(Qt5 COMPONENTS Core Quick REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick Network REQUIRED)
 
 
 if(ANDROID)
-    add_library(oop_2019_komunikator_p2p SHARED
-      src/main.cpp
-      qml.qrc
-      ${TS_FILES}
-    )
+        add_library(oop_2019_komunikator_p2p SHARED
+                ${SOURCES}
+                ${HEADERS}
+                ${RESOURCES}
+        )
 else()
-    add_executable(oop_2019_komunikator_p2p
-      src/main.cpp
-      qml.qrc
-      ${TS_FILES}
-    )
+        add_executable(oop_2019_komunikator_p2p
+                ${SOURCES}
+                ${HEADERS}
+                ${RESOURCES}
+        )
 endif()
 
 target_compile_definitions(oop_2019_komunikator_p2p
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(oop_2019_komunikator_p2p
-  PRIVATE Qt5::Core Qt5::Quick)
+        PRIVATE Qt5::Core Qt5::Quick Qt5::Network)

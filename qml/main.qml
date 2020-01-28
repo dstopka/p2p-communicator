@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
+import pl.p2p 1.0
 import QtQuick.Controls 2.3
 
 //---------MAIN WINDOW---------------
@@ -13,6 +14,11 @@ Window {
     minimumWidth: 640
     title: qsTr("p2p chat")
 
+    Controller {
+        id: controller
+
+        onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
+     }
     //---------CONNECTIONS PANNEL---------------
 
     Rectangle {
@@ -192,7 +198,7 @@ Window {
 
 
 
-            TextField {                
+            TextField {
                 id: newIpInput
                 anchors.top: newAliasInput.bottom
                 anchors.topMargin: 3
@@ -414,6 +420,7 @@ Window {
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
                                 messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                controller.message=messageArea.text
                                 messageArea.text=""
                                 }
                             }
