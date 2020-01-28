@@ -10,8 +10,12 @@
 class Message : public QObject {
 Q_OBJECT
 public:
+    QString getText();
+    void setText();
 
 private:
+    QString text;
+    bool isSender;
 
 signals:
 
