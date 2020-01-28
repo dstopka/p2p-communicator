@@ -43,6 +43,7 @@ public slots:
 
     void onNewMessage(const QString &);
     void onNewConnection(QTcpSocket *socket);
+
 };
 
 

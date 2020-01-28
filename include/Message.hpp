@@ -12,7 +12,7 @@ Q_OBJECT
 
     Q_PROPERTY(QString text
                        READ
-                       getText
+                               getText
                        WRITE
                        setText)
     Q_PROPERTY(bool sender
@@ -20,6 +20,8 @@ Q_OBJECT
                        isSender)
 
 public:
+    explicit Message(QString str);
+
     QString getText();
 
     void setText(QString text);
@@ -29,7 +31,7 @@ public:
 
 private:
     QString text;
-    bool sender;
+    bool sender{};
 
 signals:
 
