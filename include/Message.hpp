@@ -10,12 +10,20 @@
 class Message : public QObject {
 Q_OBJECT
 
-Q_PROPERTY(QString text READ getText WRITE setText)
-Q_PROPERTY(bool sender READ isSender)
+    Q_PROPERTY(QString text
+                       READ
+                       getText
+                       WRITE
+                       setText)
+    Q_PROPERTY(bool sender
+                       READ
+                       isSender)
 
 public:
     QString getText();
+
     void setText(QString text);
+
     bool isSender();
 
 
