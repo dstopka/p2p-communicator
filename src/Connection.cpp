@@ -9,6 +9,12 @@ Connection::Connection(QTcpSocket *sock) {
     connect(socket.get(), SIGNAL(readyRead()), this, SLOT(onReceivedData()));
 }
 
+Connection::Connection(const QString &ip, qint16 port) {
+    socket = std::make_unique<QTcpSocket>();
+    socket->connectToHost(ip, port);
+    connect(socket.get(), SIGNAL(readyRead()), this, SLOT(onReceivedData()));
+}
+
 void Connection::onReceivedData() {
     QTextStream stream(socket.get());
     QChar c;
@@ -19,11 +25,6 @@ void Connection::onReceivedData() {
         emit receivedMessage(std::make_shared<Message>(str));
     }
 
-}
-
-Connection::Connection(const QString &ip, qint16 port) {
-    socket = std::make_unique<QTcpSocket>();
-    socket->connectToHost(ip, port);
 }
 
 void Connection::sendMessage(const std::shared_ptr<Message> &msg) {
