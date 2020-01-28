@@ -44,7 +44,7 @@ Window {
             delegate: Rectangle {
                 height: 50
                 width: parent.width
-                color: "#3b3b3b"
+                color: connections.currentIndex === index ? "#595959" : "#3b3b3b"
                 Rectangle {
                       width: parent.width
                       height: 1
@@ -78,7 +78,7 @@ Window {
                     anchors.top: parent.top
                     height: parent.height-1
                     width: parent.width-50
-                    color: "#3b3b3b"
+                    color: "transparent"
                     Label {
                         id: aliasLabel
                         anchors.top: parent.top
@@ -139,6 +139,10 @@ Window {
                         radius: 4
                     }
                 }
+                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: connections.currentIndex = index
+                                }
             }
 
          }
@@ -207,7 +211,7 @@ Window {
                 verticalAlignment: TextInput.AlignVCenter
                 horizontalAlignment: TextInput.AlignHCenter
                 color: "#adadad"
-                validator: RegExpValidator { regExp: /([0-9]{1,3}\.){3}[0-9]{1,3}/ }
+                validator: RegExpValidator { regExp: /(([0-9]{1,3}\.){3}[0-9]{1,3} | localhost)/ }
                 background: Rectangle {
                     radius: 8
                     color: "#2e2e2e"
