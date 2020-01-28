@@ -141,9 +141,12 @@ Window {
                     }
                 }
                 MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: connections.currentIndex = index
-                                }
+                       anchors.fill: parent
+                       onClicked: {
+                           connections.currentIndex = index
+                           //TODO controller ...
+                       }
+                 }
             }
 
          }
@@ -195,6 +198,14 @@ Window {
                      border.color: "#242424"
                      border.width: 1
                  }
+                 Keys.onReturnPressed: {
+                     if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                         controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                         newIpInput.text = ""
+                         newAliasInput.text = ""
+                         newPortInput.text = ""
+                     }
+                 }
              }
 
 
@@ -219,6 +230,14 @@ Window {
                     border.color: "#242424"
                     border.width: 1
                 }
+                Keys.onReturnPressed: {
+                    if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                        controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                        newIpInput.text = ""
+                        newAliasInput.text = ""
+                        newPortInput.text = ""
+                    }
+                }
             }
 
 
@@ -241,6 +260,14 @@ Window {
                     color: "#2e2e2e"
                     border.color: "#242424"
                     border.width: 1
+                }
+                Keys.onReturnPressed: {
+                    if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                        controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                        newIpInput.text = ""
+                        newAliasInput.text = ""
+                        newPortInput.text = ""
+                    }
                 }
             }
 
@@ -415,9 +442,6 @@ Window {
                                 border.color: '#1f1f1f'
                                 border.width: 1
                             }
-                            //onActiveFocusChanged: {
-                            //    messageArea.text=""
-                            //}
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
                                 messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
