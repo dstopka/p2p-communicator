@@ -15,11 +15,13 @@ Q_PROPERTY(bool sender READ isSender)
 
 public:
     QString getText();
-    void setText();
+    void setText(QString text);
+    bool isSender();
+
 
 private:
     QString text;
-    bool isSender;
+    bool sender;
 
 signals:
 
