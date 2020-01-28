@@ -54,12 +54,13 @@ connection
 class Message {
 +QString getText()
 +void setText()
++bool isSender()
 -QString text
--bool isSender
+-bool sender
 }
 
 class Server {
-manage incoming connection
+manages incoming connection
 ..
 -QTcpServer tcpServer
 --
@@ -74,8 +75,9 @@ class Connection {
 
 class File {
 +QString getName()
++bool isSender()
 -QFile file
--bool isSender
+-bool sender
 }
 
 class Database {
