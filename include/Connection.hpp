@@ -5,6 +5,8 @@
 #ifndef OOP_2019_KOMUNIKATOR_P2P_CONNECTION_HPP
 #define OOP_2019_KOMUNIKATOR_P2P_CONNECTION_HPP
 
+#include "include/Message.hpp"
+
 #include <QObject>
 #include <QTcpSocket>
 #include <memory>
@@ -12,7 +14,7 @@
 class Connection : public QObject {
 Q_OBJECT
 public:
-    void sendMessage(const QString &);
+    void sendMessage(const std::shared_ptr<Message> &msg);
 
     explicit Connection(QTcpSocket *);
 
@@ -23,7 +25,7 @@ private:
 
 signals:
 
-    void receivedMessage(const QString &);
+    void receivedMessage(const std::shared_ptr<Message> &);
 public slots:
 
     void onReceivedData();

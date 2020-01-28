@@ -3,3 +3,22 @@
 //
 
 #include "include/Message.hpp"
+
+#include <utility>
+
+QString Message::getText() {
+    return text;
+}
+
+void Message::setText(QString text) {
+    this->text = std::move(text);
+}
+
+bool Message::isSender() {
+    return sender;
+}
+
+Message::Message(QString str) : text(std::move(str)) {
+
+};
+
