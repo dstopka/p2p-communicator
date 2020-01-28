@@ -269,7 +269,7 @@ Window {
                         newPortInput.text = ""
                     }
                 }
-            }
+
 
 
             Rectangle {
@@ -311,10 +311,6 @@ Window {
                         }
                     }
                 }
-            }
-
-
-         }
 
 
     //---------MESSAGES PANNEL---------------
