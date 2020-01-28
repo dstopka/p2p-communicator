@@ -18,6 +18,7 @@ Window {
         id: controller
 
         onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
+        onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':true})
      }
     //---------CONNECTIONS PANNEL---------------
 
@@ -44,7 +45,7 @@ Window {
             delegate: Rectangle {
                 height: 50
                 width: parent.width
-                color: "#3b3b3b"
+                color: connections.currentIndex === index ? "#595959" : "#3b3b3b"
                 Rectangle {
                       width: parent.width
                       height: 1
@@ -78,7 +79,7 @@ Window {
                     anchors.top: parent.top
                     height: parent.height-1
                     width: parent.width-50
-                    color: "#3b3b3b"
+                    color: "transparent"
                     Label {
                         id: aliasLabel
                         anchors.top: parent.top
@@ -139,6 +140,10 @@ Window {
                         radius: 4
                     }
                 }
+                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: connections.currentIndex = index
+                                }
             }
 
          }
@@ -272,7 +277,8 @@ Window {
                     }
                     onClicked: {
                         if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
-                            connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
+                            //connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
+                            controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
                             newIpInput.text = ""
                             newAliasInput.text = ""
                             newPortInput.text = ""
