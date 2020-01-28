@@ -277,7 +277,6 @@ Window {
                     }
                     onClicked: {
                         if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
-                            //connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
                             controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
                             newIpInput.text = ""
                             newAliasInput.text = ""
@@ -354,7 +353,7 @@ Window {
                             }
                     }
                 onCountChanged: {
-                               var newIndex = count - 1 // last index
+                    var newIndex = count - 1 // last index
                     positionViewAtEnd()
                     currentIndex = newIndex
                 }
@@ -456,8 +455,8 @@ Window {
                         onClicked: {
                             if (messageArea.text != ""){
                             messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                            controller.message=messageArea.text
                             messageArea.text=""
-                            //forceActiveFocus()
                             }
                         }
                     }
