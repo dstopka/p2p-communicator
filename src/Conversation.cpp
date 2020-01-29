@@ -6,20 +6,22 @@
 
 #include <utility>
 
+void Conversation::connectSlots()
+{
+    connect(connection.get(), SIGNAL(receivedMessage(const std::shared_ptr<Message> &)),
+            this, SLOT(onReceivedMessage(const std::shared_ptr<Message> &)));
+    connect(connection.get(), SIGNAL(receivedStatus(QChar)),
+            this, SLOT(onReceivedStatus(QChar)));
+}
+
 Conversation::Conversation(QString name, QTcpSocket *socket) : name(std::move(name)) {
     connection = std::make_unique<Connection>(socket);
-    connect(connection.get(), SIGNAL(receivedMessage(
-                                             const std::shared_ptr<Message> &)),
-            this, SLOT(onReceivedMessage(
-                               const std::shared_ptr<Message> &)));
+    connectSlots();
 }
 
 Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(std::move(name)) {
     connection = std::make_unique<Connection>(ip, port);
-    connect(connection.get(), SIGNAL(receivedMessage(
-                                             const std::shared_ptr<Message> &)),
-            this, SLOT(onReceivedMessage(
-                               const std::shared_ptr<Message> &)));
+    connectSlots();
 }
 
 void Conversation::sendMessage(const QString &str) {
@@ -39,6 +41,18 @@ void Conversation::onReceivedMessage(const std::shared_ptr<Message> &msg) {
 
 const QVector<std::shared_ptr<Message>> &Conversation::getMessages() {
     return messages;
+}
+
+const std::unique_ptr<Connection> &Conversation::getConnection() {
+    return connection;
+}
+
+void Conversation::onReceivedStatus(QChar c) {
+    switch (c.toLatin1()){
+        case 'a':
+            emit status(Message::ACCEPT);
+            break;
+    }
 }
 
 

@@ -20,7 +20,7 @@ set (SOURCES
         src/Database.cpp
         src/Message.cpp
         src/File.cpp
-        )
+)
 
 set(HEADERS
         include/Controller.hpp
@@ -30,7 +30,7 @@ set(HEADERS
         include/Database.hpp
         include/Message.hpp
         include/File.hpp
-        )
+)
 
 set( RESOURCES
         qml.qrc

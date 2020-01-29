@@ -169,7 +169,7 @@ Window {
                         border.width: 1
                         Text {
                             id: acceptConnectionButtonText
-                            text: "Accept"
+                            text: "ACCEPT"
                             anchors.centerIn: parent
                             font.pixelSize: 9
                             color: '#ffffff'

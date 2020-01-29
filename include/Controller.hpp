@@ -14,11 +14,7 @@
 
 class Controller : public QObject {
 Q_OBJECT
-    Q_PROPERTY(QString message
-                       WRITE
-                       sendMessage
-                       READ
-                       getMessage)
+    Q_PROPERTY(QString message WRITE sendMessage READ getMessage)
 public:
     Controller();
 
@@ -34,8 +30,6 @@ private:
     std::shared_ptr<Conversation> currentConversation;
     QList<std::shared_ptr<Conversation>> conversations;
     QString lastMessage;
-
-
 
     void changeCurrentConversation(const std::shared_ptr<Conversation>& conversation);
 

@@ -20,6 +20,8 @@ Q_OBJECT
                        isSender)
 
 public:
+    enum Status {ACCEPT};
+
     explicit Message(QString str, bool sent);
 
     QString getText();
