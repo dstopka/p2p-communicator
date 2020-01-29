@@ -37,4 +37,8 @@ void Conversation::onReceivedMessage(const std::shared_ptr<Message> &msg) {
     emit newMessage(msg->getText());
 }
 
+const QVector<std::shared_ptr<Message>> &Conversation::getMessages() {
+    return messages;
+}
+
 

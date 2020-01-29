@@ -18,9 +18,9 @@ void Controller::acceptConnection(qint8 idx) {
 }
 
 void Controller::onNewConnection(QTcpSocket *socket) {
-        currentConversation = std::make_shared<Conversation>("name", socket);
-        conversations.push_front(currentConversation);        
-        emit newPendingConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
+    emit newPendingConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
+    changeCurrentConversation(std::make_shared<Conversation>("name", socket));
+    conversations.push_front(currentConversation);
 }
 
 void Controller::sendMessage(const QString &str) {
@@ -30,11 +30,9 @@ void Controller::sendMessage(const QString &str) {
 
 void Controller::createNewConnection(QString name, const QString &ip, qint16 port)
 {
-    currentConversation = std::make_shared<Conversation>(name, ip, port);
-    conversations.push_front(currentConversation);
-    connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
-            this, SLOT(onNewMessage(const QString &)));
     emit newConnection(ip, QString::number(port), name);
+    changeCurrentConversation(std::make_shared<Conversation>(name, ip, port));
+    conversations.push_back(currentConversation);
 }
 
 void Controller::onNewMessage(const QString &str) {
@@ -44,4 +42,27 @@ void Controller::onNewMessage(const QString &str) {
 
 const QString &Controller::getMessage() {
     return lastMessage;
+}
+
+void Controller::changeCurrentConversation(const std::shared_ptr<Conversation> &conversation) {
+    if(currentConversation != nullptr)
+        disconnect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
+                   this, SLOT(onNewMessage(const QString &)));
+    currentConversation = conversation;
+    connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
+            this, SLOT(onNewMessage(const QString &)));
+
+    int index = conversations.indexOf(conversation);
+    if(index == -1)
+        index = conversations.size();
+
+    emit clearMessagesAndChangeCurrentConversation(index);
+    for(const auto& msg: currentConversation->getMessages())
+    {
+        loadMessage(msg->getText(),msg->isSender());
+    }
+}
+
+void Controller::changeCurrentConversation(int index) {
+    changeCurrentConversation(conversations[index]);
 }

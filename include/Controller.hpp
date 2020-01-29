@@ -26,6 +26,7 @@ public:
     Q_INVOKABLE void createNewConnection(QString name, const QString& ip, qint16 port);
     Q_INVOKABLE void acceptConnection(qint8 idx);
     const QString &getMessage();
+    Q_INVOKABLE void changeCurrentConversation(int index);
 
 private:
     std::unique_ptr<Server> server;
@@ -36,11 +37,15 @@ private:
 
 
 
+    void changeCurrentConversation(const std::shared_ptr<Conversation>& conversation);
+
 signals:
 
     void newMessage();
     void newConnection(QString ipAdress, QString port, QString name);
     void newPendingConnection(QString ipAdress, QString port, QString name);
+    void clearMessagesAndChangeCurrentConversation(int index);
+    void loadMessage(const QString &str, bool sender);
 
 public slots:
 

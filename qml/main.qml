@@ -17,6 +17,16 @@ Window {
     Controller {
         id: controller
         onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
+        onClearMessagesAndChangeCurrentConversation: {
+            messagesModel.clear()
+            connections.currentIndex = index
+        }
+        onLoadMessage:{
+            if(sender)
+                messagesModel.append({'msgType':'sent', 'msg':qsTr(str)})
+            else
+                messagesModel.append({'msgType':'received', 'msg':qsTr(str)})
+        }
         onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
         onNewPendingConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':true})
      }
@@ -219,12 +229,12 @@ Window {
                         }
                     }
                 MouseArea {
-                       anchors.fill: parent
-                       onClicked: {
-                           connections.currentIndex = index
-                           //TODO controller ...
-                       }
-                 }
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        connections.currentIndex = index
+                                        controller.changeCurrentConversation(index)
+                                    }
+                                }
             }
 
          }
