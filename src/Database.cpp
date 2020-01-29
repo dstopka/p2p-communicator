@@ -26,12 +26,25 @@ Database::Database() {
                   "ip_address TEXT, "
                   "port INTEGER)");
 
-    if (query.exec()) {
-        qDebug() << "Table conversation created successfully";
+    ok = query.exec();
+    if (ok) {
+        qDebug() << "Table \"conversation\" created successfully";
     } else {
-        qDebug() << "Table conversation creation failed";
+        qDebug() << "Table \"conversation\" creation failed";
     }
 
+    query.prepare("CREATE TABLE IF NOT EXISTS message "
+                  "(message_id INTEGER PRIMARY KEY, "
+                  "name TEXT, "
+                  "text TEXT, "
+                  "sender INTEGER)");
+
+    ok = query.exec();
+    if (ok) {
+        qDebug() << "Table \"message\" created successfully";
+    } else {
+        qDebug() << "Table \"message\" creation failed";
+    }
 }
 
 Database::~Database() {
