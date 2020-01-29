@@ -480,6 +480,13 @@ Window {
                                 source: src ? src : ""
                                 fillMode: Image.PreserveAspectFit
                                 sourceSize.width: messages.width * 0.6
+                                MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            Qt.openUrlExternally(parent.source)
+                                        }
+                                    }
                             }
                     }
                 onCountChanged: {
@@ -527,7 +534,7 @@ Window {
                         anchors.left: parent.left
                         anchors.leftMargin: 15
                         height: parent.height *0.67
-                        width: parent.width-70
+                        width: parent.width-70                        
                         TextArea {
                             id: messageArea
                             enabled: (!connectionsModel.count || connectionsModel.get(connections.currentIndex).pending || !connectionsModel.get(connections.currentIndex).connected) ? false : true
@@ -537,6 +544,7 @@ Window {
                             font.pixelSize: 14
                             selectByMouse: true
                             color: "#adadad"
+                            property var urls: []
                             //textFormat: Text.RichText
                             background: Rectangle {
                                 height: parent.height
@@ -549,16 +557,21 @@ Window {
                             }
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
-                                    if(messageArea.text.includes('png') || messageArea.text.toLowerCase().includes('jpg'))
+                                    for(var file of urls)
                                     {
-                                        messagesModel.append({'msgType':'sent', 'src':messageArea.text.match(/file.*\.jpg"/i).toString().slice(0, -1), 'msg':''})
-                                        //controller.sendMessage(, 'f')
+                                        console.log(file)
+                                        if(file.match(/.png$/i) || file.match(/.jpg$/i))
+                                        {
+                                            messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
+                                        }
+                                        //controller.sendMessage(file , 'f')
                                     }
-                                    else
-                                    {
+                                    urls = []
+                                    //else
+                                    //{
                                         messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text), 'src':""})
                                         controller.sendMessage(messageArea.text, 'm')
-                                    }
+                                    //}
 
                                     messageArea.textFormat = Text.PlainText
                                     messageArea.text=""
@@ -569,7 +582,10 @@ Window {
                                     anchors.fill: parent
                                     onDropped: {
                                         for(var file of drop.urls)
+                                        {
                                             parent.text += '<style type="text/css">a{color: #ffffff;font-size:12px;}</style><a href="' + file + '"><i>' + file.match(/[^\/]+$/) + '</i></a>' + " "
+                                            messageArea.urls.push(file)
+                                        }
                                         messageArea.textFormat = Text.RichText
                                     }
                                 }
