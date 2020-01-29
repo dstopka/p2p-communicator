@@ -12,7 +12,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (SOURCES
-        src/main.cpp
         src/Controller.cpp
         src/Server.cpp
         src/Conversation.cpp
@@ -58,14 +57,27 @@ if(ANDROID)
                 ${RESOURCES}
         )
 else()
-        add_executable(oop_2019_komunikator_p2p
-                ${SOURCES}
-                ${HEADERS}
-                ${RESOURCES}
-        )
+        add_library(oop_2019_komunikator_p2p_lib ${HEADERS} ${SOURCES})
+        target_include_directories(oop_2019_komunikator_p2p_lib PUBLIC include)
+
+        add_executable(oop_2019_komunikator_p2p src/main.cpp
+         ${RESOURCES}
+         )
+        #target_link_libraries(oop_2019_komunikator_p2p oop_2019_komunikator_p2p_lib)
 endif()
+
+
+target_compile_definitions(oop_2019_komunikator_p2p_lib
+  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+target_link_libraries(oop_2019_komunikator_p2p_lib
+        PRIVATE Qt5::Core Qt5::Quick Qt5::Network)
 
 target_compile_definitions(oop_2019_komunikator_p2p
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(oop_2019_komunikator_p2p
-        PRIVATE Qt5::Core Qt5::Quick Qt5::Network)
+        PRIVATE Qt5::Core Qt5::Quick Qt5::Network
+        oop_2019_komunikator_p2p_lib)
+
+
+
+add_subdirectory(test)
