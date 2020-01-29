@@ -16,6 +16,7 @@
 class Conversation : public QObject {
 Q_OBJECT
 public:
+
     explicit Conversation(QString name, QTcpSocket *);
 
     explicit Conversation(QString name, const QString& ip, qint16 port);
@@ -27,19 +28,25 @@ public:
 
     QString getName();
 
+    const std::unique_ptr<Connection> &getConnection();
+
 private:
     QVector<std::shared_ptr<Message>> messages;
     QVector<std::shared_ptr<File>> files;
     std::unique_ptr<Connection> connection;
     QString name;
 
+    void connectSlots();
+
 signals:
 
     void newMessage(const QString &);
+    void status(Message::Status);
 
 public slots:
 
     void onReceivedMessage(const std::shared_ptr<Message> &);
+    void onReceivedStatus(QChar c);
 };
 
 

@@ -19,10 +19,20 @@ void Connection::onReceivedData() {
     QTextStream stream(socket.get());
     QChar c;
     stream >> c;
-    if (c == 'm') {
-        QString str;
-        str = stream.readAll();
-        emit receivedMessage(std::make_shared<Message>(str,false));
+    switch (c.toLatin1())
+    {
+        case 'm': {
+            QString str;
+            str = stream.readAll();
+            emit receivedMessage(std::make_shared<Message>(str, false));
+            break;
+        }
+        case 's': {
+            QChar s;
+            stream >> s;
+            emit receivedStatus(s);
+            break;
+        }
     }
 }
 
@@ -30,6 +40,18 @@ void Connection::sendMessage(const std::shared_ptr<Message> &msg) {
     QTextStream stream(socket.get());
     stream << 'm' << msg->getText();
 }
+
+void Connection::sendStatus(Message::Status status) {
+    QTextStream stream(socket.get());
+    QString str('s');
+    switch (status)
+    {
+        case Message::ACCEPT:
+            str.append('a');
+            stream<<str;
+    }
+}
+
 
 void Connection::sendFile(const std::shared_ptr<File> &file)
 {

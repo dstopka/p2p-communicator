@@ -18,6 +18,7 @@ class Connection : public QObject {
 Q_OBJECT
 public:
     void sendMessage(const std::shared_ptr<Message> &msg);
+    void sendStatus(Message::Status status);
     void sendFile(const std::shared_ptr<File> &file);
 
     explicit Connection(QTcpSocket *);
@@ -28,8 +29,9 @@ private:
     std::unique_ptr<QTcpSocket> socket;
 
 signals:
-
     void receivedMessage(const std::shared_ptr<Message> &);
+    void receivedStatus(QChar);
+
 public slots:
 
     void onReceivedData();

@@ -29,6 +29,7 @@ Window {
         }
         onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
         onNewPendingConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':true})
+        onSetAccepted: connectionsModel.setProperty(index, "connected", true)
      }
     //---------CONNECTIONS PANNEL---------------
 
@@ -169,7 +170,7 @@ Window {
                         border.width: 1
                         Text {
                             id: acceptConnectionButtonText
-                            text: "Accept"
+                            text: "ACCEPT"
                             anchors.centerIn: parent
                             font.pixelSize: 9
                             color: '#ffffff'
