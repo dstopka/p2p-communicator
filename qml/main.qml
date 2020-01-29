@@ -448,7 +448,7 @@ Window {
                 delegate: Rectangle {
                     anchors.topMargin: 10
                     width: messages.width * 0.6
-                    height: mssg.contentHeight + 12
+                    height: Math.max(mssg.contentHeight + 12, img.height)
                     color: msgType == 'sent' ? "#428bad" : "#4db3a3"
                     radius: 8
                     anchors.right: msgType == 'sent' ? parent.right : undefined
@@ -460,7 +460,7 @@ Window {
                                 anchors.leftMargin: 5
                                 id: mssg
                                 color: '#ffffff'
-                                text: msg || ""
+                                text: msg
                                 font.pointSize: 9
                                 wrapMode: Text.Wrap
                                 textFormat: Text.RichText
@@ -475,7 +475,8 @@ Window {
                                     }
                             }
                             Image {
-                                source: src || ""
+                                id: img
+                                source: src ? src : ""
                                 fillMode: Image.PreserveAspectFit
                                 sourceSize.width: messages.width * 0.6
                             }
@@ -548,15 +549,22 @@ Window {
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
                                     if(messageArea.text.includes('png') || messageArea.text.toLowerCase().includes('jpg'))
-                                        messagesModel.append({'msgType':'sent', 'src':messageArea.text.match(/file.*\.jpg"/i).toString().slice(0, -1)})
+                                    {
+                                        messagesModel.append({'msgType':'sent', 'src':messageArea.text.match(/file.*\.jpg"/i).toString().slice(0, -1), 'msg':''})
+                                        //controller.sendMessage(, 'f')
+                                    }
                                     else
-                                        messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                                    controller.message=messageArea.text
+                                    {
+                                        messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text), 'src':""})
+                                        controller.sendMessage(messageArea.text, 'm')
+                                    }
+
                                     messageArea.textFormat = Text.PlainText
                                     messageArea.text=""
                                 }
                             }
                             DropArea {
+                                    id: drop
                                     anchors.fill: parent
                                     onDropped: {
                                         for(var file of drop.urls)
@@ -597,7 +605,6 @@ Window {
                                     messagesModel.append({'msgType':'sent', 'src':messageArea.text.match(/file.*\.jpg"/).toString().slice(0, -1)})
                                 else
                                     messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                                messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
                                 controller.message=messageArea.text
                                 messageArea.textFormat = Text.PlainText
                                 messageArea.text=""

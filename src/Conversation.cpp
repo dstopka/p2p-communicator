@@ -22,10 +22,18 @@ Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(
                                const std::shared_ptr<Message> &)));
 }
 
-void Conversation::sendMessage(const QString &str) {
+void Conversation::sendMessage(const QString &str)
+{
     std::shared_ptr<Message> msg = std::make_shared<Message>(str,true);
     messages.push_back(msg);
     connection->sendMessage(msg);
+}
+
+void Conversation::sendFile(const QString &str)
+{
+    std::shared_ptr<File> file = std::make_shared<File>(str,true);
+    files.push_back(file);
+    connection->sendFile(file);
 }
 
 QString Conversation::getName() {

@@ -9,9 +9,28 @@
 
 class File : public QObject {
 Q_OBJECT
+
+    Q_PROPERTY(QString url
+                       READ
+                       getUrl
+                       WRITE
+                       setUrl)
+    Q_PROPERTY(bool sender
+                       READ
+                       isSender)
 public:
+    explicit File(QString str, bool sent);
+
+
+    QString getUrl();
+
+    void setUrl(QString url);
+
+    bool isSender();
 
 private:
+    QString url;
+    bool sender;
 
 signals:
 

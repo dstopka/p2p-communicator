@@ -30,3 +30,10 @@ void Connection::sendMessage(const std::shared_ptr<Message> &msg) {
     QTextStream stream(socket.get());
     stream << 'm' << msg->getText();
 }
+
+void Connection::sendFile(const std::shared_ptr<File> &file)
+{
+    QDataStream stream(socket.get());
+    QFile out(file->getUrl());
+    stream << 'f' << out.readAll();
+}

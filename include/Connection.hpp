@@ -6,15 +6,19 @@
 #define OOP_2019_KOMUNIKATOR_P2P_CONNECTION_HPP
 
 #include "include/Message.hpp"
+#include "include/File.hpp"
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QDataStream>
+#include <QFile>
 #include <memory>
 
 class Connection : public QObject {
 Q_OBJECT
 public:
     void sendMessage(const std::shared_ptr<Message> &msg);
+    void sendFile(const std::shared_ptr<File> &file);
 
     explicit Connection(QTcpSocket *);
 
