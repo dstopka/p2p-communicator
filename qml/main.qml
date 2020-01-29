@@ -455,23 +455,29 @@ Window {
                     anchors.left: msgType == 'received' ? parent.left : undefined
                     anchors.rightMargin: msgType == 'sent' ? 10 : undefined
                     anchors.leftMargin: msgType == 'received' ? 10 : undefined
-                            Text {
+                            TextEdit {
                                 anchors.fill: parent
                                 anchors.leftMargin: 5
                                 id: mssg
                                 color: '#ffffff'
-                                text: msg
-                                font.pixelSize: 10
+                                text: msg || ""
+                                font.pointSize: 9
                                 wrapMode: Text.Wrap
-                                verticalAlignment: Text.AlignVCenter
-                                //readOnly: true
                                 textFormat: Text.RichText
+                                verticalAlignment: Text.AlignVCenter
+                                readOnly: true
+                                selectByMouse: true
                                 onLinkActivated: Qt.openUrlExternally(link)
                                 MouseArea {
                                         anchors.fill: parent
                                         acceptedButtons: Qt.NoButton
                                         cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     }
+                            }
+                            Image {
+                                source: src || ""
+                                fillMode: Image.PreserveAspectFit
+                                sourceSize.width: messages.width * 0.6
                             }
                     }
                 onCountChanged: {
@@ -529,8 +535,7 @@ Window {
                             font.pixelSize: 14
                             selectByMouse: true
                             color: "#adadad"
-                            textFormat: Text.RichText
-                            //font.family: emojiFont.name
+                            //textFormat: Text.RichText
                             background: Rectangle {
                                 height: parent.height
                                 width: parent.width
@@ -542,17 +547,21 @@ Window {
                             }
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
-                                messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                                controller.message=messageArea.text
-                                messageArea.text=""
+                                    if(messageArea.text.includes('png') || messageArea.text.toLowerCase().includes('jpg'))
+                                        messagesModel.append({'msgType':'sent', 'src':messageArea.text.match(/file.*\.jpg"/i).toString().slice(0, -1)})
+                                    else
+                                        messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                    controller.message=messageArea.text
+                                    messageArea.textFormat = Text.PlainText
+                                    messageArea.text=""
                                 }
                             }
                             DropArea {
                                     anchors.fill: parent
                                     onDropped: {
                                         for(var file of drop.urls)
-                                            parent.text += '<html><style type="text/css">a{color: #ffffff;}</style><a href="' + file + '">' + file.match(/[^\/]+$/) + '</a></html>' + " "
-                                        parent.font.italic = true
+                                            parent.text += '<style type="text/css">a{color: #ffffff;font-size:12px;}</style><a href="' + file + '"><i>' + file.match(/[^\/]+$/) + '</i></a>' + " "
+                                        messageArea.textFormat = Text.RichText
                                     }
                                 }
                     }
@@ -584,9 +593,14 @@ Window {
                         }
                         onClicked: {
                             if (messageArea.text != ""){
-                            messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                            controller.message=messageArea.text
-                            messageArea.text=""
+                                if(messageArea.text.includes('png') || messageArea.text.includes('jpg'))
+                                    messagesModel.append({'msgType':'sent', 'src':messageArea.text.match(/file.*\.jpg"/).toString().slice(0, -1)})
+                                else
+                                    messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                controller.message=messageArea.text
+                                messageArea.textFormat = Text.PlainText
+                                messageArea.text=""
                             }
                         }
                     }
