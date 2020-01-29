@@ -21,7 +21,7 @@ void Connection::onReceivedData() {
     stream >> c;
     if (c == 'm') {
         QString str;
-        stream >> str;
+        str = stream.readAll();
         emit receivedMessage(std::make_shared<Message>(str,false));
     }
 }

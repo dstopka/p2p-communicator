@@ -13,14 +13,13 @@ Controller::Controller() {
 }
 
 void Controller::acceptConnection(qint8 idx) {
-    connect(conversations[idx].get(), SIGNAL(newMessage(const QString &)),
-            this, SLOT(onNewMessage(const QString &)));
+
 }
 
 void Controller::onNewConnection(QTcpSocket *socket) {
     emit newPendingConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
     changeCurrentConversation(std::make_shared<Conversation>("name", socket));
-    conversations.push_front(currentConversation);
+    conversations.push_back(currentConversation);
 }
 
 void Controller::sendMessage(const QString &str) {
