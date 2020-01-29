@@ -73,7 +73,3 @@ void Connection::sendFile(const std::shared_ptr<File> &file)
     QByteArray data = out.readAll();
     stream << 'f' << quint32(file->getName().size()) << file->getName() << quint64(data.size()) << data;
 }
-
-const std::unique_ptr<QTcpSocket> &Connection::getSocket() {
-    return socket;
-}
