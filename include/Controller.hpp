@@ -14,11 +14,7 @@
 
 class Controller : public QObject {
 Q_OBJECT
-    Q_PROPERTY(QString message
-                       WRITE
-                       sendMessage
-                       READ
-                       getMessage)
+    Q_PROPERTY(QString message WRITE sendMessage READ getMessage)
 public:
     Controller();
 
@@ -35,8 +31,6 @@ private:
     QList<std::shared_ptr<Conversation>> conversations;
     QString lastMessage;
 
-
-
     void changeCurrentConversation(const std::shared_ptr<Conversation>& conversation);
 
 signals:
@@ -46,6 +40,7 @@ signals:
     void newPendingConnection(QString ipAdress, QString port, QString name);
     void clearMessagesAndChangeCurrentConversation(int index);
     void loadMessage(const QString &str, bool sender);
+    void setAccepted(int index);
 
 public slots:
 
