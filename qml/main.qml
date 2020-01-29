@@ -16,9 +16,7 @@ Window {
 
     Controller {
         id: controller
-
         onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
-        onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':true})
         onClearMessagesAndChangeCurrentConversation: {
             messagesModel.clear()
             connections.currentIndex = index
@@ -29,6 +27,8 @@ Window {
             else
                 messagesModel.append({'msgType':'received', 'msg':qsTr(str)})
         }
+        onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
+        onNewPendingConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':true})
      }
     //---------CONNECTIONS PANNEL---------------
 
@@ -53,7 +53,7 @@ Window {
                 id: connectionsModel
             }
             delegate: Rectangle {
-                height: 50
+                height: 55
                 width: parent.width
                 color: connections.currentIndex === index ? "#595959" : "#3b3b3b"
                 Rectangle {
@@ -64,12 +64,12 @@ Window {
                 }
                 Rectangle {
                     id: logoType
-                    height: 40
-                    width: 40
+                    height: 42.5
+                    width: 42.5
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 10
-                    radius: 20
+                    radius: width / 2
                     color: Qt.rgba(Math.random(),Math.random(),Math.random(), 1)
                     border.color: "#2e2e2e"
                     border.width: 1
@@ -97,7 +97,7 @@ Window {
                         text: als
                         color: "#adadad"
                         font.bold: true
-                        font.pixelSize: 16
+                        font.pixelSize: 15
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
                     Label {
@@ -106,19 +106,19 @@ Window {
                         anchors.topMargin: 2
                         text: ip + ":" + port
                         color: "#adadad"
-                        font.pixelSize: 10
+                        font.pixelSize: 9
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
                     Rectangle {
                         id: connectionIdenticator
-                        visible: connected ? false : true
+                        visible: (!connected && !pending) ? true : false
                         color: '#ff0000'
                         width: 8
                         height: 8
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        anchors.margins: 3
+                        anchors.margins: 6
                         radius: 4
                         SequentialAnimation {
                             running: true
@@ -140,16 +140,94 @@ Window {
                         }
                     }
                     Rectangle {
-                        visible: connected ? true : false
+                        visible: (connected && !pending) ? true : false
                         color: '#00ff00'
                         width: 8
                         height: 8
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        anchors.margins: 3
+                        anchors.margins: 6
                         radius: 4
                     }
-                }
+
+                    //-------------ACCEPT/REJECT BUTTONS
+
+                    Rectangle {
+                        id: acceptConnectionButton
+                        z: 2
+                        visible: pending ? true : false
+                        anchors.top: ipPortLabel.bottom
+                        anchors.topMargin: 2
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -width / 2
+                        anchors.leftMargin: 3
+                        implicitWidth: acceptConnectionButtonText.contentWidth + 20
+                        implicitHeight: 16
+                        color: "#008502"
+                        radius: 6
+                        border.color: "#005701"
+                        border.width: 1
+                        Text {
+                            id: acceptConnectionButtonText
+                            text: "Accept"
+                            anchors.centerIn: parent
+                            font.pixelSize: 9
+                            color: '#ffffff'
+                        }
+                        MouseArea {
+                            id: acceptConnectionButtonMouseArea
+                            z: 2
+                            hoverEnabled: true
+                            anchors.fill: parent
+                            onEntered: {
+                                parent.color = "#00b503"
+                            }
+                            onExited: {
+                                parent.color = "#008502"
+                            }
+                            onClicked: {
+                                controller.acceptConnection(index)
+                                connectionsModel.setProperty(index, "pending", false)
+                                connectionsModel.setProperty(index, "connected", true)
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: rejectConnectionButton
+                        visible: pending ? true : false
+                        anchors.top: ipPortLabel.bottom
+                        anchors.topMargin: 2
+                        anchors.left: acceptConnectionButton.right
+                        anchors.leftMargin: 3
+                        implicitWidth: rejectConnectionButtonText.contentWidth + 20
+                        implicitHeight: 16
+                        color: "#ad0000"
+                        radius: 6
+                        border.color: "#6e0000"
+                        border.width: 1
+                        Text {
+                            id: rejectConnectionButtonText
+                            text: "Reject"
+                            anchors.centerIn: parent
+                            font.pixelSize: 9
+                            color: '#ffffff'
+                        }
+                        MouseArea {
+                            id: rejectConnectionButtonMouseArea
+                            hoverEnabled: true
+                            anchors.fill: parent
+                            onEntered: {
+                                parent.color = "#ff0000"
+                            }
+                            onExited: {
+                                parent.color = "#ad0000"
+                            }
+                            onClicked: {
+
+                            }
+                        }
+                    }
                 MouseArea {
                                     anchors.fill: parent
                                     onClicked: {
@@ -159,6 +237,7 @@ Window {
                                 }
             }
 
+         }
          }
 
         //---------NEW CONNECTION---------------
@@ -208,7 +287,15 @@ Window {
                      border.color: "#242424"
                      border.width: 1
                  }
-             }
+                 Keys.onReturnPressed: {
+                     if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                         controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                         newIpInput.text = ""
+                         newAliasInput.text = ""
+                         newPortInput.text = ""
+                     }
+                 }
+
 
 
 
@@ -232,7 +319,15 @@ Window {
                     border.color: "#242424"
                     border.width: 1
                 }
-            }
+                Keys.onReturnPressed: {
+                    if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                        controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                        newIpInput.text = ""
+                        newAliasInput.text = ""
+                        newPortInput.text = ""
+                    }
+                }
+
 
 
             TextField {
@@ -255,7 +350,15 @@ Window {
                     border.color: "#242424"
                     border.width: 1
                 }
-            }
+                Keys.onReturnPressed: {
+                    if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                        controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                        newIpInput.text = ""
+                        newAliasInput.text = ""
+                        newPortInput.text = ""
+                    }
+                }
+
 
 
             Rectangle {
@@ -290,20 +393,17 @@ Window {
                     }
                     onClicked: {
                         if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
-                            //connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
                             controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
                             newIpInput.text = ""
                             newAliasInput.text = ""
                             newPortInput.text = ""
+                            forceActiveFocus()
                         }
                     }
                 }
+
             }
-
-
-         }
-
-
+    }
     //---------MESSAGES PANNEL---------------
 
     Rectangle {
@@ -367,7 +467,7 @@ Window {
                             }
                     }
                 onCountChanged: {
-                               var newIndex = count - 1 // last index
+                    var newIndex = count - 1 // last index
                     positionViewAtEnd()
                     currentIndex = newIndex
                 }
@@ -414,6 +514,7 @@ Window {
                         width: parent.width-70
                         TextArea {
                             id: messageArea
+                            enabled: (!connectionsModel.count || connectionsModel.get(connections.currentIndex).pending || !connectionsModel.get(connections.currentIndex).connected) ? false : true
                             placeholderText: "Type your message..."
                             verticalAlignment: TextEdit.AlignVCenter
                             wrapMode: TextArea.Wrap
@@ -429,9 +530,6 @@ Window {
                                 border.color: '#1f1f1f'
                                 border.width: 1
                             }
-                            //onActiveFocusChanged: {
-                            //    messageArea.text=""
-                            //}
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
                                 messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
@@ -469,8 +567,8 @@ Window {
                         onClicked: {
                             if (messageArea.text != ""){
                             messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                            controller.message=messageArea.text
                             messageArea.text=""
-                            //forceActiveFocus()
                             }
                         }
                     }
@@ -516,3 +614,4 @@ Window {
         }
     }
 }
+

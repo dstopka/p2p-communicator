@@ -12,17 +12,15 @@ Controller::Controller() {
     connect(server.get(), SIGNAL(newConnection(QTcpSocket * )), this, SLOT(onNewConnection(QTcpSocket * )));
 }
 
-bool Controller::acceptConnection() {
-    //TODO
-    return true;
+void Controller::acceptConnection(qint8 idx) {
+    connect(conversations[idx].get(), SIGNAL(newMessage(const QString &)),
+            this, SLOT(onNewMessage(const QString &)));
 }
 
 void Controller::onNewConnection(QTcpSocket *socket) {
-    if (acceptConnection()) {
-        emit newConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
-        changeCurrentConversation(std::make_shared<Conversation>("name", socket));
-        conversations.push_back(currentConversation);
-    }
+    emit newPendingConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
+    changeCurrentConversation(std::make_shared<Conversation>("name", socket));
+    conversations.push_front(currentConversation);
 }
 
 void Controller::sendMessage(const QString &str) {
@@ -30,7 +28,7 @@ void Controller::sendMessage(const QString &str) {
         currentConversation->sendMessage(str);
 }
 
-void Controller::createNewConnection(const QString& name, const QString &ip, qint16 port)
+void Controller::createNewConnection(QString name, const QString &ip, qint16 port)
 {
     emit newConnection(ip, QString::number(port), name);
     changeCurrentConversation(std::make_shared<Conversation>(name, ip, port));
