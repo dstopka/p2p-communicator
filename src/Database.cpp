@@ -20,13 +20,13 @@ Database::Database() {
     }
 
     QSqlQuery query;
-    query.exec("CREATE TABLE IF NOT EXIST conversation "
-               "(conversation_id INTEGER PRIMARY KEY, "
-               "name TEXT, "
-               "ip_address TEXT, "
-               "port INTEGER)");
+    query.prepare("CREATE TABLE IF NOT EXISTS conversation "
+                  "(conversation_id INTEGER PRIMARY KEY, "
+                  "name TEXT, "
+                  "ip_address TEXT, "
+                  "port INTEGER)");
 
-    if (query.isActive()) {
+    if (query.exec()) {
         qDebug() << "Table conversation created successfully";
     } else {
         qDebug() << "Table conversation creation failed";
