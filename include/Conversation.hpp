@@ -11,7 +11,6 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <memory>
-enum Status {ACCEPT};
 
 class Conversation : public QObject {
 Q_OBJECT

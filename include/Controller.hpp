@@ -40,6 +40,7 @@ signals:
     void newPendingConnection(QString ipAdress, QString port, QString name);
     void clearMessagesAndChangeCurrentConversation(int index);
     void loadMessage(const QString &str, bool sender);
+    void setAccepted(int index);
 
 public slots:
 

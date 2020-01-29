@@ -13,7 +13,7 @@ Controller::Controller() {
 }
 
 void Controller::acceptConnection(qint8 idx) {
-
+    conversations[idx]->getConnection()->sendStatus(Message::ACCEPT);
 }
 
 void Controller::onNewConnection(QTcpSocket *socket) {
@@ -31,7 +31,11 @@ void Controller::createNewConnection(QString name, const QString &ip, qint16 por
 {
     emit newConnection(ip, QString::number(port), name);
     changeCurrentConversation(std::make_shared<Conversation>(name, ip, port));
+    int index = conversations.size();
+    connect(currentConversation.get(),&Conversation::status,
+            [this,index](){emit setAccepted(index);});
     conversations.push_back(currentConversation);
+
 }
 
 void Controller::onNewMessage(const QString &str) {
