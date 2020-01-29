@@ -8,15 +8,21 @@
 #include <QObject>
 #include "Conversation.hpp"
 #include <QSqlDatabase>
+#include <QtSql/QSqlQuery>
 
 class Database : public QObject {
 Q_OBJECT
 public:
+
+    Database();
+    ~Database();
+
     void storeConversation(Conversation conversation);
     QVector<Conversation> loadConversations();
 
 private:
     std::unique_ptr<QSqlDatabase> database;
+//    QString connectionName;
     void storeMessage(Message message);
     void storeFile(File file);
 
@@ -24,8 +30,8 @@ private:
 signals:
 
 public slots:
-    void onNewMessage(const QString &str);
-    void onNewFile(const QFile &file);
+//    void onNewMessage(const QString &str);
+//    void onNewFile(const QFile &file);
 
 };
 
