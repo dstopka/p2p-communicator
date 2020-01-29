@@ -37,7 +37,10 @@ Database::Database() {
                   "(message_id INTEGER PRIMARY KEY, "
                   "name TEXT, "
                   "text TEXT, "
-                  "sender INTEGER)");
+                  "sender INTEGER, "
+                  "conversation_id INTEGER, "
+                  "FOREIGN KEY(conversation_id) "
+                  "REFERENCES conversation (conversation_id))");
 
     ok = query.exec();
     if (ok) {
@@ -45,6 +48,7 @@ Database::Database() {
     } else {
         qDebug() << "Table \"message\" creation failed";
     }
+
 }
 
 Database::~Database() {
