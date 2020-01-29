@@ -34,7 +34,7 @@ private:
 
 signals:
 
-    void newMessage();
+    void newMessage(const QString &str);
     void newConnection(QString ipAdress, QString port, QString name);
     void newPendingConnection(QString ipAdress, QString port, QString name);
     void clearMessagesAndChangeCurrentConversation(int index);

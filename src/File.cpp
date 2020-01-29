@@ -4,9 +4,10 @@
 
 #include "include/File.hpp"
 
-File::File(QString str, bool sent): url(std::move(str)), sender(sent)
+File::File(QString str, bool sent): sender(sent)
 {
-
+    url = str.split("://").last();
+    name = url.split('/').last();
 };
 
 QString File::getUrl()
@@ -22,4 +23,8 @@ void File::setUrl(QString url)
 bool File::isSender()
 {
     return sender;
+}
+
+QString File::getName() {
+    return name;
 }

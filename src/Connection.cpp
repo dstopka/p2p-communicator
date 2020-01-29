@@ -2,6 +2,7 @@
 // Created by student on 27.01.2020.
 //
 
+#include <QtCore/QtAlgorithms>
 #include "include/Connection.hpp"
 
 Connection::Connection(QTcpSocket *sock) {
@@ -33,6 +34,17 @@ void Connection::onReceivedData() {
             emit receivedStatus(s);
             break;
         }
+        case 'f':{
+            quint32 nameSize;
+            socket->read(reinterpret_cast<char *>(&nameSize), sizeof(quint32));
+            char *nameData = new char[nameSize];
+            socket->read(nameData,nameSize);
+            quint64 fileSize;
+            socket->read(reinterpret_cast<char *>(&fileSize), sizeof(quint64));
+            QFile in(nameData);
+            in.open(QIODevice::WriteOnly);
+            in.write(socket->read(fileSize),fileSize);
+        }
     }
 }
 
@@ -57,5 +69,11 @@ void Connection::sendFile(const std::shared_ptr<File> &file)
 {
     QDataStream stream(socket.get());
     QFile out(file->getUrl());
-    stream << 'f' << out.readAll();
+    out.open(QIODevice::ReadOnly);
+    QByteArray data = out.readAll();
+    stream << 'f' << quint32(file->getName().size()) << file->getName() << quint64(data.size()) << data;
+}
+
+const std::unique_ptr<QTcpSocket> &Connection::getSocket() {
+    return socket;
 }

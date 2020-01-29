@@ -28,8 +28,11 @@ public:
 
     bool isSender();
 
+    QString getName();
+
 private:
     QString url;
+    QString name;
     bool sender;
 
 signals:

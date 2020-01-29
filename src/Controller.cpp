@@ -45,7 +45,7 @@ void Controller::createNewConnection(QString name, const QString &ip, qint16 por
 
 void Controller::onNewMessage(const QString &str) {
     lastMessage = str;
-    emit newMessage();
+    emit newMessage(str);
 }
 
 const QString &Controller::getMessage() {
