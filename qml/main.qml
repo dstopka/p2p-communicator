@@ -19,6 +19,16 @@ Window {
 
         onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
         onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':true})
+        onClearMessagesAndChangeCurrentConversation: {
+            messagesModel.clear()
+            connections.currentIndex = index
+        }
+        onLoadMessage:{
+            if(sender)
+                messagesModel.append({'msgType':'sent', 'msg':qsTr(str)})
+            else
+                messagesModel.append({'msgType':'received', 'msg':qsTr(str)})
+        }
      }
     //---------CONNECTIONS PANNEL---------------
 

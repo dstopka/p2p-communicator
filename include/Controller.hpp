@@ -42,6 +42,8 @@ signals:
 
     void newMessage();
     void newConnection(QString ipAdress, QString port, QString name);
+    void clearMessagesAndChangeCurrentConversation(int index);
+    void loadMessage(const QString &str, bool sender);
 
 public slots:
 

@@ -19,9 +19,9 @@ bool Controller::acceptConnection() {
 
 void Controller::onNewConnection(QTcpSocket *socket) {
     if (acceptConnection()) {
+        emit newConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
         changeCurrentConversation(std::make_shared<Conversation>("name", socket));
         conversations.push_back(currentConversation);
-        emit newConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
     }
 }
 
@@ -32,9 +32,9 @@ void Controller::sendMessage(const QString &str) {
 
 void Controller::createNewConnection(const QString& name, const QString &ip, qint16 port)
 {
+    emit newConnection(ip, QString::number(port), name);
     changeCurrentConversation(std::make_shared<Conversation>(name, ip, port));
     conversations.push_back(currentConversation);
-    emit newConnection(ip, QString::number(port), name);
 }
 
 void Controller::onNewMessage(const QString &str) {
@@ -54,10 +54,15 @@ void Controller::changeCurrentConversation(const std::shared_ptr<Conversation> &
     connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
             this, SLOT(onNewMessage(const QString &)));
 
-    //TODO clear and print all messages
+    int index = conversations.indexOf(conversation);
+    if(index == -1)
+        index = conversations.size();
+
+    emit clearMessagesAndChangeCurrentConversation(index);
     for(const auto& msg: currentConversation->getMessages())
     {
         qDebug()<<msg->getText()<<msg->isSender();
+        loadMessage(msg->getText(),msg->isSender());
     }
 }
 
