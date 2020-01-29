@@ -12,21 +12,15 @@ Controller::Controller() {
     connect(server.get(), SIGNAL(newConnection(QTcpSocket * )), this, SLOT(onNewConnection(QTcpSocket * )));
 }
 
-bool Controller::acceptConnection() {
-    //TODO
-    return true;
+void Controller::acceptConnection(qint8 idx) {
+    connect(conversations[idx].get(), SIGNAL(newMessage(const QString &)),
+            this, SLOT(onNewMessage(const QString &)));
 }
 
 void Controller::onNewConnection(QTcpSocket *socket) {
-    if (acceptConnection()) {
         currentConversation = std::make_shared<Conversation>("name", socket);
-
-        conversations.push_front(currentConversation);
-        connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
-                this, SLOT(onNewMessage(const QString &)));
-        emit newConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
-    }
-
+        conversations.push_front(currentConversation);        
+        emit newPendingConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
 }
 
 void Controller::sendMessage(const QString &str) {

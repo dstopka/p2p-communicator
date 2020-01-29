@@ -24,6 +24,7 @@ public:
 
     void sendMessage(const QString &str);
     Q_INVOKABLE void createNewConnection(QString name, const QString& ip, qint16 port);
+    Q_INVOKABLE void acceptConnection(qint8 idx);
     const QString &getMessage();
 
 private:
@@ -33,12 +34,13 @@ private:
     QList<std::shared_ptr<Conversation>> conversations;
     QString lastMessage;
 
-    bool acceptConnection();
+
 
 signals:
 
     void newMessage();
     void newConnection(QString ipAdress, QString port, QString name);
+    void newPendingConnection(QString ipAdress, QString port, QString name);
 
 public slots:
 
