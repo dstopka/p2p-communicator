@@ -142,7 +142,10 @@ Window {
                 }
                 MouseArea {
                                     anchors.fill: parent
-                                    onClicked: connections.currentIndex = index
+                                    onClicked: {
+                                        connections.currentIndex = index
+                                        controller.changeCurrentConversation(index)
+                                    }
                                 }
             }
 

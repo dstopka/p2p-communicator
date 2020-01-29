@@ -23,8 +23,9 @@ public:
     Controller();
 
     void sendMessage(const QString &str);
-    Q_INVOKABLE void createNewConnection(QString name, const QString& ip, qint16 port);
+    Q_INVOKABLE void createNewConnection(const QString& name, const QString& ip, qint16 port);
     const QString &getMessage();
+    Q_INVOKABLE void changeCurrentConversation(int index);
 
 private:
     std::unique_ptr<Server> server;
@@ -34,6 +35,8 @@ private:
     QString lastMessage;
 
     bool acceptConnection();
+
+    void changeCurrentConversation(const std::shared_ptr<Conversation>& conversation);
 
 signals:
 

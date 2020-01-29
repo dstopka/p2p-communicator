@@ -21,6 +21,8 @@ public:
 
     void sendMessage(const QString &str);
 
+    const QVector<std::shared_ptr<Message>> &getMessages();
+
     QString getName();
 
 private:

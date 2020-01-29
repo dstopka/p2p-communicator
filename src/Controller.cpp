@@ -19,14 +19,10 @@ bool Controller::acceptConnection() {
 
 void Controller::onNewConnection(QTcpSocket *socket) {
     if (acceptConnection()) {
-        currentConversation = std::make_shared<Conversation>("name", socket);
-
-        conversations.push_front(currentConversation);
-        connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
-                this, SLOT(onNewMessage(const QString &)));
+        changeCurrentConversation(std::make_shared<Conversation>("name", socket));
+        conversations.push_back(currentConversation);
         emit newConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
     }
-
 }
 
 void Controller::sendMessage(const QString &str) {
@@ -34,12 +30,10 @@ void Controller::sendMessage(const QString &str) {
         currentConversation->sendMessage(str);
 }
 
-void Controller::createNewConnection(QString name, const QString &ip, qint16 port)
+void Controller::createNewConnection(const QString& name, const QString &ip, qint16 port)
 {
-    currentConversation = std::make_shared<Conversation>(name, ip, port);
-    conversations.push_front(currentConversation);
-    connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
-            this, SLOT(onNewMessage(const QString &)));
+    changeCurrentConversation(std::make_shared<Conversation>(name, ip, port));
+    conversations.push_back(currentConversation);
     emit newConnection(ip, QString::number(port), name);
 }
 
@@ -50,4 +44,23 @@ void Controller::onNewMessage(const QString &str) {
 
 const QString &Controller::getMessage() {
     return lastMessage;
+}
+
+void Controller::changeCurrentConversation(const std::shared_ptr<Conversation> &conversation) {
+    if(currentConversation != nullptr)
+        disconnect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
+                   this, SLOT(onNewMessage(const QString &)));
+    currentConversation = conversation;
+    connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
+            this, SLOT(onNewMessage(const QString &)));
+
+    //TODO clear and print all messages
+    for(const auto& msg: currentConversation->getMessages())
+    {
+        qDebug()<<msg->getText()<<msg->isSender();
+    }
+}
+
+void Controller::changeCurrentConversation(int index) {
+    changeCurrentConversation(conversations[index]);
 }
