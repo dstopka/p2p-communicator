@@ -34,7 +34,7 @@ void Controller::createNewConnection(QString name, const QString &ip, qint16 por
     conversations.push_back(currentConversation);
 }
 
-void Controller::onNewMessage(const QString &str) {
+    void Controller::onNewMessage(const QString &str) {
     lastMessage = str;
     emit newMessage();
 }

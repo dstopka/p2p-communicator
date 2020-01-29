@@ -7,9 +7,11 @@
 
 #include "include/Connection.hpp"
 #include "include/Message.hpp"
+#include "include/File.hpp"
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QtCore/QFile>
 #include <memory>
 
 class Conversation : public QObject {
