@@ -47,7 +47,7 @@ set( RESOURCES
 #    endif()
 #endif()
 
-find_package(Qt5 COMPONENTS Core Quick Network REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick Network Sql REQUIRED)
 
 
 if(ANDROID)
@@ -70,12 +70,12 @@ endif()
 target_compile_definitions(oop_2019_komunikator_p2p_lib
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(oop_2019_komunikator_p2p_lib
-        PRIVATE Qt5::Core Qt5::Quick Qt5::Network)
+        PRIVATE Qt5::Core Qt5::Quick Qt5::Network Qt5::Sql)
 
 target_compile_definitions(oop_2019_komunikator_p2p
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(oop_2019_komunikator_p2p
-        PRIVATE Qt5::Core Qt5::Quick Qt5::Network
+        PRIVATE Qt5::Core Qt5::Quick Qt5::Network Qt5::Sql
         oop_2019_komunikator_p2p_lib)
 
 
