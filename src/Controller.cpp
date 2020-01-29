@@ -61,7 +61,6 @@ void Controller::changeCurrentConversation(const std::shared_ptr<Conversation> &
     emit clearMessagesAndChangeCurrentConversation(index);
     for(const auto& msg: currentConversation->getMessages())
     {
-        qDebug()<<msg->getText()<<msg->isSender();
         loadMessage(msg->getText(),msg->isSender());
     }
 }
