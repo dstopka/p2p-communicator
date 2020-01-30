@@ -21,11 +21,16 @@ public:
 
     explicit Conversation(QString name, const QString& ip, qint16 port);
 
+    explicit Conversation(QString name, const QString& ip, qint16 port, QVector<std::shared_ptr<Message>> messages);
+
+
     void sendMessage(const QString &str);
 
     const QVector<std::shared_ptr<Message>> &getMessages();
 
-    QString getName();
+    QString getName() const;
+
+    const std::unique_ptr<Connection>& getConnection() const;
 
 private:
     QVector<std::shared_ptr<Message>> messages;

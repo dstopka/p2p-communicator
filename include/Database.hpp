@@ -9,6 +9,7 @@
 #include "Conversation.hpp"
 #include <QSqlDatabase>
 #include <QtSql/QSqlQuery>
+#include <QtNetwork/QHostAddress>
 
 class Database : public QObject {
 Q_OBJECT
@@ -17,15 +18,16 @@ public:
     Database();
     ~Database();
 
-    void storeConversation(Conversation conversation);
+    void storeConversation(const Conversation& conversation);
+
     QVector<Conversation> loadConversations();
 
 private:
     std::unique_ptr<QSqlDatabase> database;
-//    QString connectionName;
     void storeMessage(Message message);
     void storeFile(File file);
-
+    static QVector<std::shared_ptr<Message>> loadMessages(int conversationId);
+    QVector<File> loadFiles();
 
 signals:
 

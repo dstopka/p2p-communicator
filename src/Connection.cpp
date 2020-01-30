@@ -30,3 +30,7 @@ void Connection::sendMessage(const std::shared_ptr<Message> &msg) {
     QTextStream stream(socket.get());
     stream << 'm' << msg->getText();
 }
+
+const std::unique_ptr<QTcpSocket>& Connection::getSocket() {
+    return socket;
+}
