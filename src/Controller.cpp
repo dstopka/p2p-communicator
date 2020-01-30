@@ -15,6 +15,7 @@ Controller::Controller() {
 
 void Controller::acceptConnection(qint8 idx) {
     conversations[idx]->getConnection()->sendStatus(Message::ACCEPT);
+    database->storeConversation(*conversations[idx]);
 }
 
 void Controller::onNewConnection(QTcpSocket *socket) {
@@ -23,7 +24,6 @@ void Controller::onNewConnection(QTcpSocket *socket) {
     conversations.push_back(currentConversation);
     connect(currentConversation.get(), &Conversation::newMessage,
             database.get(), &Database::onNewMessage);
-    database->storeConversation(*currentConversation);
 }
 
 void Controller::sendMessage(const QString &str, const QChar ind) {
