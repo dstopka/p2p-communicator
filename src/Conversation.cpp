@@ -52,7 +52,6 @@ void Conversation::sendMessage(const QString &str) {
     connection->sendMessage(msg);
 }
 
-QString Conversation::getName() const {
 void Conversation::sendFile(const QString &str)
 {
     std::shared_ptr<File> file = std::make_shared<File>(str,true);
@@ -60,7 +59,7 @@ void Conversation::sendFile(const QString &str)
     messages.push_back(std::make_shared<Message>("<style type='text/css'>a{color: #ffffff;font-size:12px;}</style><a href='file://" + QDir::currentPath() + '/' + file->getName() + "'><i> "+file->getName()+"</i></a>",true));connection->sendFile(file);
 }
 
-QString Conversation::getName() {
+QString Conversation::getName() const {
     return name;
 }
 
@@ -93,7 +92,7 @@ void Conversation::onReceivedStatus(QChar c) {
 void Conversation::onReceivedFile(const std::shared_ptr<File> &file) {
     files.push_back(file);
     messages.push_back(std::make_shared<Message>("<style type='text/css'>a{color: #ffffff;font-size:12px;}</style><a href='file://" + QDir::currentPath() + '/' + file->getName() + "'><i> "+file->getName()+"</i></a>",false));
-    emit newMessage(messages.last()->getText());
+    emit newMessage(messages.last()->getText(), id);
 }
 
 

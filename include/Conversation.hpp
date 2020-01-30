@@ -48,7 +48,7 @@ private:
 
 signals:
 
-    void newMessage(const QString &, int conversationId);
+    void newMessage(const QString &text, int conversationId);
     void status(Message::Status);
 
 public slots:

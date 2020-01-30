@@ -6,7 +6,8 @@
 #include "include/Database.hpp"
 
 Database::Database() {
-    QString path{"db.sqlite"};
+
+    QString path{"komunikator.db"};
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     database=std::unique_ptr<QSqlDatabase>(&db);
     database->setHostName("test");
@@ -104,6 +105,12 @@ void Database::storeMessage(const Message& message, int conversationId) {
     query.bindValue(":text", message.getText());
     query.bindValue(":sender", bool{message.isSender()});
     query.bindValue(":conversation_id", conversationId);
+
+    if (query.exec()) {
+        qDebug() << "Message stored successfully";
+    } else {
+        qDebug() << "Message storing failed";
+    }
 }
 
 void Database::storeFile(File file) {
