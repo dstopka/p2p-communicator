@@ -20,9 +20,9 @@ public:
 
     explicit Conversation(QString name, QTcpSocket *);
 
-    explicit Conversation(QString name, const QString& ip, qint16 port);
+    explicit Conversation(QString name, const QString& ip, quint16 port);
 
-    explicit Conversation(QString name, const QString& ip, qint16 port, QVector<std::shared_ptr<Message>> messages, int id);
+    explicit Conversation(QString name, const QString& ip, quint16 port, QVector<std::shared_ptr<Message>> messages, int id);
 
 
     void sendMessage(const QString &str);

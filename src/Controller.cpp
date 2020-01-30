@@ -85,13 +85,16 @@ void Controller::changeCurrentConversation(int index) {
 }
 
 void Controller::loadConversations() {
-    conversations.append(database->loadConversations());
+    conversations = database->loadConversations();
 
     if (!conversations.isEmpty()) {
 
         for(const std::shared_ptr<Conversation>& conversation : conversations) {
-            QString ipAddress = conversation->getConnection()->getSocket()->peerAddress().toString();
-            qint16 port = conversation->getConnection()->getSocket()->peerPort();
+            QString ipAddress = conversation->getConnection()->getSocket()->peerAddress().toString().mid(7);
+
+            quint16 port = conversation->getConnection()->getSocket()->peerPort();
+            qDebug() << ipAddress << ":" << port;
+
             emit newConnection(ipAddress, QString::number(port), conversation->getName());
         }
         Conversation::setCurrentId(conversations.last()->getId()+1);

@@ -59,7 +59,8 @@ void Database::storeConversation(const Conversation& conversation) {
     query.prepare("INSERT INTO conversation(conversation_id, name, ip_address, port) values(:conversation_id, :name, :ip_address, :port)");
     query.bindValue(":conversation_id", conversation.getId());
     query.bindValue(":name", conversation.getName());
-    int port = conversation.getConnection()->getSocket()->peerPort();
+//    int port = conversation.getConnection()->getSocket()->peerPort();
+    quint16 port = 8000;
     QHostAddress ipAddress = conversation.getConnection()->getSocket()->peerAddress();
     query.bindValue(":ip_address", ipAddress.toString().mid(7));
     query.bindValue(":port", port);
@@ -84,7 +85,8 @@ QList<std::shared_ptr<Conversation>> Database::loadConversations() {
             int conversation_id = query.value(0).toInt();
             QString name = query.value(1).toString();
             QString ipAddress = query.value(2).toString();
-            qint16 port = query.value(3).toInt();
+            quint16 port =  query.value(3).toInt();
+            qDebug() << ipAddress << ":" << port;
             std::shared_ptr<Conversation> ptr = std::make_shared<Conversation>(name, ipAddress, port, loadMessages(conversation_id), conversation_id);
             conversations.append(ptr);
             qDebug() << ptr->getName();

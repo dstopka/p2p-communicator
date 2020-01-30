@@ -23,7 +23,7 @@ public:
 
     explicit Connection(QTcpSocket *);
 
-    explicit Connection(const QString &ip, qint16 port);
+    explicit Connection(const QString &ip, quint16 port);
 
     const std::unique_ptr<QTcpSocket>& getSocket();
 
