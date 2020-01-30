@@ -564,7 +564,7 @@ Window {
                                         {
                                             messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
                                         }
-                                        //controller.sendMessage(file , 'f')
+                                        controller.sendMessage(file , 'f')
                                     }
                                     urls = []
                                     //else

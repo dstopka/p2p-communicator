@@ -70,9 +70,14 @@ void Connection::sendStatus(Message::Status status) {
 
 void Connection::sendFile(const std::shared_ptr<File> &file)
 {
-    QDataStream stream(socket.get());
     QFile out(file->getUrl());
     out.open(QIODevice::ReadOnly);
     QByteArray data = out.readAll();
-    stream << 'f' << quint32(file->getName().size()) << file->getName() << quint64(data.size()) << data;
+    quint32 nameSize = file->getName().size();
+    quint64 fileSize = data.size();
+    socket->write("f",1);
+    socket->write((char*)&(nameSize), sizeof(quint32));
+    socket->write(file->getName().toLatin1(),nameSize);
+    socket->write((char*)&(fileSize), sizeof(quint64));
+    socket->write(data,fileSize);
 }
