@@ -91,10 +91,13 @@ QList<std::shared_ptr<Conversation>> Database::loadConversations() {
     return QList<std::shared_ptr<Conversation>>();
 }
 
-void Database::storeMessage(Message message) {
+void Database::storeMessage(const Message& message, int conversationId) {
 
     QSqlQuery query;
-    query.prepare("INSERT INTO message(name, ip_address, port) values(:name, :ip_address, :port)");
+    query.prepare("INSERT INTO message(text, sender, conversation_id) values(:text, :sender, :conversation_id)");
+    query.bindValue(":text", message.getText());
+    query.bindValue(":sender", bool{message.isSender()});
+    query.bindValue(":conversation_id", conversationId);
 }
 
 void Database::storeFile(File file) {
@@ -123,4 +126,10 @@ QVector<std::shared_ptr<Message>> Database::loadMessages(int conversationId) {
 
 QVector<File> Database::loadFiles() {
     return QVector<File>();
+}
+
+void Database::onNewMessage(const QString &text, int conversationId) {
+
+    Message message{text, false};
+    storeMessage(message, conversationId);
 }

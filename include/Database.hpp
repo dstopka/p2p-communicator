@@ -24,7 +24,7 @@ public:
 
 private:
     std::unique_ptr<QSqlDatabase> database;
-    void storeMessage(Message message);
+    static void storeMessage(const Message& message, int conversationId);
     void storeFile(File file);
     static QVector<std::shared_ptr<Message>> loadMessages(int conversationId);
     QVector<File> loadFiles();
@@ -33,7 +33,7 @@ signals:
 
 
 public slots:
-//    void onNewMessage(const std::shared_ptr<Message> &);
+    void onNewMessage(const QString &text, int conversationId);
 //    void onSentMessage();
 
 };
