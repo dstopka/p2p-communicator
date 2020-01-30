@@ -11,6 +11,7 @@
 #include "TestIncludes.h"
 
 TEST(Connection, sendMessage) {
+    QString testMessage = QString("test");
     std::thread serverThread(dummyServer);
     auto *socket = new QTcpSocket();
 
@@ -21,9 +22,10 @@ TEST(Connection, sendMessage) {
     if (connectSpy.count() == 0) connectSpy.wait(TIMEOUT);
     ASSERT_EQ(connectSpy.count(), 1);
 
-    c.sendMessage(std::make_shared<Message>("test", true));
+    c.sendMessage(std::make_shared<Message>(testMessage, true));
     if (writeSpy.count() == 0) writeSpy.wait(TIMEOUT);
     ASSERT_EQ(writeSpy.count(), 1);
+    ASSERT_EQ(qvariant_cast<qint64>(writeSpy.at(0).at(0)), testMessage.size() + 1);  // + 1 because 'm' is added to start of message
 
     serverThread.join();
 }
@@ -42,6 +44,7 @@ TEST(Connection, sendStatus) {
     c.sendStatus(Message::Status::ACCEPT);
     if (writeSpy.count() == 0) writeSpy.wait(TIMEOUT);
     ASSERT_EQ(writeSpy.count(), 1);
+    ASSERT_EQ(qvariant_cast<qint64>(writeSpy.at(0).at(0)), 2); // "sa" length
 
     serverThread.join();
 }
@@ -70,6 +73,8 @@ TEST(Connection, onReceivedData_message) {
     ASSERT_EQ(readSpy.count(), 1);
     if (receivedMessageSpy.count() == 0) receivedMessageSpy.wait(TIMEOUT);
     ASSERT_EQ(receivedMessageSpy.count(), 1);
+    std::shared_ptr<Message> received = qvariant_cast<std::shared_ptr<Message>>(receivedMessageSpy.at(0).at(0));
+    ASSERT_EQ(received->getText(), QString("test"));
 
     serverThread.join();
 }
@@ -94,6 +99,7 @@ TEST(Connection, onReceivedData_status) {
     ASSERT_EQ(readSpy.count(), 1);
     if (receivedStatusSpy.count() == 0) receivedStatusSpy.wait(TIMEOUT);
     ASSERT_EQ(receivedStatusSpy.count(), 1);
+    ASSERT_EQ(qvariant_cast<QChar>(receivedStatusSpy.at(0).at(0)), QChar('a'));
 
     serverThread.join();
 }
