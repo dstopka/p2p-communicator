@@ -414,6 +414,7 @@ Window {
         height: parent.height
         anchors.right: bgFiles.left
         color: "#2e2e2e"
+        //FontLoader { id: emojiFont; source: "qrc://qml/resource/NotoSans.ttf"; }
 
         Rectangle {
                 id: borderLeftBgMessages
@@ -455,20 +456,27 @@ Window {
                     anchors.left: msgType == 'received' ? parent.left : undefined
                     anchors.rightMargin: msgType == 'sent' ? 10 : undefined
                     anchors.leftMargin: msgType == 'received' ? 10 : undefined
-                            TextArea {
+                            Text {
                                 anchors.fill: parent
                                 anchors.leftMargin: 5
                                 id: mssg
-                                color: 'white'
+                                color: '#ffffff'
                                 text: msg
                                 font.pixelSize: 10
                                 wrapMode: Text.Wrap
                                 verticalAlignment: Text.AlignVCenter
-                                readOnly: true
+                                //readOnly: true
+                                textFormat: Text.RichText
+                                onLinkActivated: Qt.openUrlExternally(link)
+                                MouseArea {
+                                        anchors.fill: parent
+                                        acceptedButtons: Qt.NoButton
+                                        cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    }
                             }
                     }
                 onCountChanged: {
-                    var newIndex = count - 1 // last index
+                    var newIndex = count - 1
                     positionViewAtEnd()
                     currentIndex = newIndex
                 }
@@ -522,6 +530,8 @@ Window {
                             font.pixelSize: 14
                             selectByMouse: true
                             color: "#adadad"
+                            textFormat: Text.RichText
+                            //font.family: emojiFont.name
                             background: Rectangle {
                                 height: parent.height
                                 width: parent.width
@@ -538,6 +548,14 @@ Window {
                                 messageArea.text=""
                                 }
                             }
+                            DropArea {
+                                    anchors.fill: parent
+                                    onDropped: {
+                                        for(var file of drop.urls)
+                                            parent.text += '<html><style type="text/css">a{color: #ffffff;}</style><a href="' + file + '">' + file.match(/[^\/]+$/) + '</a></html>' + " "
+                                        parent.font.italic = true
+                                    }
+                                }
                     }
                 }
                 Rectangle {
