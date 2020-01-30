@@ -64,7 +64,9 @@ Window {
         }
 
         onNewPendingConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':true})
-        onSetAccepted: connectionsModel.setProperty(index, "connected", true)
+        onSetAccepted: {
+            connectionsModel.setProperty(index, "connected", true)
+        }
         Component.onCompleted: {controller.loadConversations()}
     }
 
