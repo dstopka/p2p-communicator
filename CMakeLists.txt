@@ -47,7 +47,7 @@ set( RESOURCES
 #    endif()
 #endif()
 
-find_package(Qt5 COMPONENTS Core Quick Network REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick Network Test REQUIRED)
 
 
 if(ANDROID)
