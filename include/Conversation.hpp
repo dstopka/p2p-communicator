@@ -32,7 +32,7 @@ public:
 
     const std::unique_ptr<Connection>& getConnection() const;
 
-    int getId();
+    int getId() const;
 
 private:
     QVector<std::shared_ptr<Message>> messages;

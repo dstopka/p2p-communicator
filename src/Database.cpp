@@ -55,7 +55,8 @@ Database::~Database() {
 
 void Database::storeConversation(const Conversation& conversation) {
     QSqlQuery query;
-    query.prepare("INSERT INTO conversation(name, ip_address, port) values(:name, :ip_address, :port)");
+    query.prepare("INSERT INTO conversation(conversation_id, name, ip_address, port) values(:conversation_id, :name, :ip_address, :port)");
+    query.bindValue(":conversation_id", conversation.getId());
     query.bindValue(":name", conversation.getName());
     int port = conversation.getConnection()->getSocket()->peerPort();
     QHostAddress ipAddress = conversation.getConnection()->getSocket()->peerAddress();

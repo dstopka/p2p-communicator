@@ -64,7 +64,7 @@ const std::unique_ptr<Connection> &Conversation::getConnection() const {
     return connection;
 }
 
-int Conversation::getId() {
+int Conversation::getId() const {
     return id;
 }
 
