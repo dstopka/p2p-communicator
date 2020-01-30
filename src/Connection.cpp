@@ -47,6 +47,7 @@ void Connection::onReceivedData() {
             QFile in(nameData);
             in.open(QIODevice::WriteOnly);
             in.write(socket->read(fileSize),fileSize);
+            in.close();
         }
     }
 }
@@ -80,4 +81,5 @@ void Connection::sendFile(const std::shared_ptr<File> &file)
     socket->write(file->getName().toLatin1(),nameSize);
     socket->write((char*)&(fileSize), sizeof(quint64));
     socket->write(data,fileSize);
+    out.close();
 }
