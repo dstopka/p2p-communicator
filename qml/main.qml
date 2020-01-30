@@ -34,7 +34,7 @@ Window {
         }
         onLoadMessage:{
             var source
-            if(sender)
+            if(!sender)
             {
                 if(str.match(/file.*png/i) || str.match(/file.*jpg/i))
                 {
@@ -596,6 +596,8 @@ Window {
                                             {
                                                 messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
                                             }
+                                            else
+                                                messagesModel.append({'msgType':'sent', 'src':"", 'msg':messageArea.text})
                                             controller.sendMessage(file , 'f')
                                         }
                                         urls = []
