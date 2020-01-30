@@ -93,6 +93,6 @@ void Controller::loadConversations() {
             qint16 port = conversation->getConnection()->getSocket()->peerPort();
             emit newConnection(ipAddress, QString::number(port), conversation->getName());
         }
-        Conversation::setCurrentId(conversations.last()->getId());
+        Conversation::setCurrentId(conversations.last()->getId()+1);
     }
 }
