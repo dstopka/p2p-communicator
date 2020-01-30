@@ -17,26 +17,29 @@ Connection::Connection(const QString &ip, qint16 port) {
 }
 
 void Connection::onReceivedData() {
-    QTextStream stream(socket.get());
-    QChar c;
-    stream >> c;
-    switch (c.toLatin1())
+
+    char c;
+    socket->read(&c,1);
+    switch (c)
     {
         case 'm': {
+            QTextStream stream(socket.get());
             QString str;
             str = stream.readAll();
             emit receivedMessage(std::make_shared<Message>(str, false));
             break;
         }
         case 's': {
+            QTextStream stream(socket.get());
             QChar s;
             stream >> s;
             emit receivedStatus(s);
             break;
         }
         case 'f':{
-            quint32 nameSize;
+            quint32 nameSize=0;
             socket->read(reinterpret_cast<char *>(&nameSize), sizeof(quint32));
+            qDebug()<<nameSize;
             char *nameData = new char[nameSize];
             socket->read(nameData,nameSize);
             quint64 fileSize;
