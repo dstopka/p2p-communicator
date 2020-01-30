@@ -25,6 +25,9 @@ void Controller::onNewConnection(QTcpSocket *socket) {
 void Controller::sendMessage(const QString &str) {
     if (currentConversation != nullptr)
         currentConversation->sendMessage(str);
+
+    Message message{str, true};
+    database->storeMessage(message, currentConversation->getId());
 }
 
 void Controller::createNewConnection(QString name, const QString &ip, qint16 port)
