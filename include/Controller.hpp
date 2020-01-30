@@ -14,6 +14,9 @@
 
 class Controller : public QObject {
 Q_OBJECT
+    Q_PROPERTY(QString message
+                       READ
+                       getMessage)
 public:
     Controller();
 

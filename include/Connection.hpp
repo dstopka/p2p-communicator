@@ -26,11 +26,15 @@ public:
     explicit Connection(const QString &ip, qint16 port);
 
 private:
+    bool isReadingFile=false;
+    quint64 lastBytes=0;
+    QFile in;
     std::unique_ptr<QTcpSocket> socket;
 
 signals:
     void receivedMessage(const std::shared_ptr<Message> &);
     void receivedStatus(QChar);
+    void receivedFile(const std::shared_ptr<File> &file);
 
 public slots:
 

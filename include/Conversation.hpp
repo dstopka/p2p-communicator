@@ -47,6 +47,7 @@ public slots:
 
     void onReceivedMessage(const std::shared_ptr<Message> &);
     void onReceivedStatus(QChar c);
+    void onReceivedFile(const std::shared_ptr<File> &file);
 };
 
 

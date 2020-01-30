@@ -3,7 +3,9 @@
 //
 
 #include <QtCore/QtAlgorithms>
+#include "include/File.hpp"
 #include "include/Connection.hpp"
+
 
 Connection::Connection(QTcpSocket *sock) {
     socket = std::unique_ptr<QTcpSocket>(sock);
@@ -19,38 +21,57 @@ Connection::Connection(const QString &ip, qint16 port) {
 void Connection::onReceivedData() {
 
     char c;
-    socket->read(&c,1);
-    switch (c)
-    {
-        case 'm': {
-            QTextStream stream(socket.get());
-            QString str;
-            str = stream.readAll();
-            emit receivedMessage(std::make_shared<Message>(str, false));
-            break;
+    if(!isReadingFile) {
+        socket->read(&c, 1);
+        switch (c) {
+            case 'm': {
+                QTextStream stream(socket.get());
+                QString str;
+                str = stream.readAll();
+                emit receivedMessage(std::make_shared<Message>(str, false));
+                break;
+            }
+            case 's': {
+                QTextStream stream(socket.get());
+                QChar s;
+                stream >> s;
+                emit receivedStatus(s);
+                break;
+            }
+            case 'f': {//10.204.42.54
+                isReadingFile = true;
+                quint32 nameSize = 0;
+                socket->read(reinterpret_cast<char *>(&nameSize), sizeof(quint32));
+                char *nameData = new char[nameSize];
+                socket->read(nameData, nameSize);
+                quint64 fileSize;
+                socket->read(reinterpret_cast<char *>(&fileSize), sizeof(quint64));
+                lastBytes = fileSize;
+                in.setFileName(nameData);
+                in.open(QIODevice::WriteOnly);
+                char *data = new char[fileSize];
+                quint64 readBytes = socket->read(data, fileSize);
+                in.write(data, readBytes);
+                lastBytes -= readBytes;
+                delete[] nameData;
+                delete[] data;
+                break;
+            }
         }
-        case 's': {
-            QTextStream stream(socket.get());
-            QChar s;
-            stream >> s;
-            emit receivedStatus(s);
-            break;
-        }
-        case 'f':{
-            quint32 nameSize=0;
-            socket->read(reinterpret_cast<char *>(&nameSize), sizeof(quint32));
-            qDebug()<<nameSize;
-            char *nameData = new char[nameSize];
-            socket->read(nameData,nameSize);
-            quint64 fileSize;
-            socket->read(reinterpret_cast<char *>(&fileSize), sizeof(quint64));
-            QFile in(nameData);
-            in.open(QIODevice::WriteOnly);
-            QByteArray data(fileSize,Qt::Initialization::Uninitialized);
-            data = socket->readAll();
-            in.write(data);
+    }
+    else{
+        char *data = new char[lastBytes];
+        quint64 readBytes = socket->read(data, lastBytes);
+        in.write(data, readBytes);
+        lastBytes -= readBytes;
+        if (lastBytes <= 0) {
             in.close();
+            isReadingFile = false;
+            socket->flush();
+            receivedFile(std::make_shared<File>(in.fileName(), false));
+            qDebug() << "koniec KURWA";
         }
+        delete[] data;
     }
 }
 
