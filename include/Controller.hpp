@@ -25,6 +25,7 @@ public:
     Q_INVOKABLE void acceptConnection(qint8 idx);
     const QString &getMessage();
     Q_INVOKABLE void changeCurrentConversation(int index);
+    Q_INVOKABLE void loadConversations();
 
 private:
     std::unique_ptr<Server> server;
