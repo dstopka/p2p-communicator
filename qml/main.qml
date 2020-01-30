@@ -57,10 +57,18 @@ Window {
                     messagesModel.append({'msgType':'sent', 'msg':qsTr(str), 'src':""})
             }
         }
-        onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
+        onNewConnection:
+        {
+            console.log("ELOWINA")
+            connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
+        }
+
         onNewPendingConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':true})
         onSetAccepted: connectionsModel.setProperty(index, "connected", true)
-     }
+        Component.onCompleted: {controller.loadConversations()}
+    }
+
+
     //---------CONNECTIONS PANNEL---------------
 
     Rectangle {
