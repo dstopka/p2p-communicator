@@ -18,7 +18,6 @@ Window {
         id: controller
         onNewMessage:
         {
-            console.log(controller.message)
                 if(controller.message.match(/file.*png/i) || controller.message.match(/file.*jpg/i))
                 {
                     var source = controller.message.match(/file.*'\>/i)
@@ -26,17 +25,37 @@ Window {
                     console.log(source)
                     messagesModel.append({'msgType':'received', 'src':source, 'msg':''})
                 }
-            messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message), 'src':""})
+                else
+                    messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message), 'src':""})
         }
         onClearMessagesAndChangeCurrentConversation: {
             messagesModel.clear()
             connections.currentIndex = index
         }
         onLoadMessage:{
+            var source
             if(sender)
-                messagesModel.append({'msgType':'sent', 'msg':qsTr(str), 'src':""})
+            {
+                if(str.match(/file.*png/i) || str.match(/file.*jpg/i))
+                {
+                    source = str.match(/file.*'\>/i)
+                    source = source[0].toString().slice(0, -2)
+                    messagesModel.append({'msgType':'received', 'src':source, 'msg':''})
+                }
+                else
+                    messagesModel.append({'msgType':'received', 'msg':qsTr(str), 'src':""})
+            }
             else
-                messagesModel.append({'msgType':'received', 'msg':qsTr(str), 'src':""})
+            {
+                if(str.match(/file.*png/i) || str.match(/file.*jpg/i))
+                {
+                    source = str.match(/file.*'\>/i)
+                    source = source[0].toString().slice(0, -2)
+                    messagesModel.append({'msgType':'sent', 'src':source, 'msg':''})
+                }
+                else
+                    messagesModel.append({'msgType':'sent', 'msg':qsTr(str), 'src':""})
+            }
         }
         onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
         onNewPendingConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':true})
