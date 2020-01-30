@@ -33,7 +33,7 @@ void Connection::onReceivedData() {
             emit receivedStatus(s);
             break;
         }
-    }
+    }\
 }
 
 void Connection::sendMessage(const std::shared_ptr<Message> &msg) {
