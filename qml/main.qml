@@ -16,16 +16,27 @@ Window {
 
     Controller {
         id: controller
-        onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
+        onNewMessage:
+        {
+            console.log(controller.message)
+                if(controller.message.match(/file.*png/i) || controller.message.match(/file.*jpg/i))
+                {
+                    var source = controller.message.match(/file.*'\>/i)
+                    source = source[0].toString().slice(0, -2)
+                    console.log(source)
+                    messagesModel.append({'msgType':'received', 'src':source, 'msg':''})
+                }
+            messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message), 'src':""})
+        }
         onClearMessagesAndChangeCurrentConversation: {
             messagesModel.clear()
             connections.currentIndex = index
         }
         onLoadMessage:{
             if(sender)
-                messagesModel.append({'msgType':'sent', 'msg':qsTr(str)})
+                messagesModel.append({'msgType':'sent', 'msg':qsTr(str), 'src':""})
             else
-                messagesModel.append({'msgType':'received', 'msg':qsTr(str)})
+                messagesModel.append({'msgType':'received', 'msg':qsTr(str), 'src':""})
         }
         onNewConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
         onNewPendingConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':true})
@@ -52,6 +63,7 @@ Window {
             anchors.bottom: parent.bottom
             model: ListModel {
                 id: connectionsModel
+                property var pending: null
             }
             delegate: Rectangle {
                 height: 55
@@ -557,21 +569,23 @@ Window {
                             }
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
-                                    for(var file of urls)
-                                    {
-                                        console.log(file)
-                                        if(file.match(/.png$/i) || file.match(/.jpg$/i))
+                                    if(urls.length > 0 ){
+                                        for(var file of urls)
                                         {
-                                            messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
+                                            console.log(file)
+                                            if(file.match(/.png$/i) || file.match(/.jpg$/i))
+                                            {
+                                                messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
+                                            }
+                                            controller.sendMessage(file , 'f')
                                         }
-                                        controller.sendMessage(file , 'f')
+                                        urls = []
                                     }
-                                    urls = []
-                                    //else
-                                    //{
+                                    else
+                                    {
                                         messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text), 'src':""})
                                         controller.sendMessage(messageArea.text, 'm')
-                                    //}
+                                    }
 
                                     messageArea.textFormat = Text.PlainText
                                     messageArea.text=""

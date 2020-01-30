@@ -80,4 +80,4 @@ target_link_libraries(oop_2019_komunikator_p2p
 
 
 
-add_subdirectory(test)
+#add_subdirectory(test)
