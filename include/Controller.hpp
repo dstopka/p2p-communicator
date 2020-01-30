@@ -14,11 +14,13 @@
 
 class Controller : public QObject {
 Q_OBJECT
-    Q_PROPERTY(QString message WRITE sendMessage READ getMessage)
+    Q_PROPERTY(QString message
+                       READ
+                       getMessage)
 public:
     Controller();
 
-    void sendMessage(const QString &str);
+    Q_INVOKABLE void sendMessage(const QString &str, const QChar ind);
     Q_INVOKABLE void createNewConnection(QString name, const QString& ip, qint16 port);
     Q_INVOKABLE void acceptConnection(qint8 idx);
     const QString &getMessage();
@@ -35,7 +37,7 @@ private:
 
 signals:
 
-    void newMessage();
+    void newMessage(const QString &str);
     void newConnection(QString ipAdress, QString port, QString name);
     void newPendingConnection(QString ipAdress, QString port, QString name);
     void clearMessagesAndChangeCurrentConversation(int index);

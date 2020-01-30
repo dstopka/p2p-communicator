@@ -7,6 +7,7 @@
 
 #include "include/Connection.hpp"
 #include "include/Message.hpp"
+#include "include/File.hpp"
 
 #include <QObject>
 #include <QTcpSocket>
@@ -21,6 +22,7 @@ public:
     explicit Conversation(QString name, const QString& ip, qint16 port);
 
     void sendMessage(const QString &str);
+    void sendFile(const QString &str);
 
     const QVector<std::shared_ptr<Message>> &getMessages();
 
@@ -30,6 +32,7 @@ public:
 
 private:
     QVector<std::shared_ptr<Message>> messages;
+    QVector<std::shared_ptr<File>> files;
     std::unique_ptr<Connection> connection;
     QString name;
 
@@ -37,13 +40,14 @@ private:
 
 signals:
 
-    void newMessage(const QString &);
+    void newMessage(const QString &str);
     void status(Message::Status);
 
 public slots:
 
     void onReceivedMessage(const std::shared_ptr<Message> &);
     void onReceivedStatus(QChar c);
+    void onReceivedFile(const std::shared_ptr<File> &file);
 };
 
 

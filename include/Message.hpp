@@ -24,6 +24,7 @@ public:
 
     explicit Message(QString str, bool sent);
 
+
     QString getText();
 
     void setText(QString text);
