@@ -69,9 +69,9 @@ void Database::storeConversation(const Conversation& conversation) {
     }
 }
 
-QVector<Conversation> Database::loadConversations() {
+QList<std::shared_ptr<Conversation>> Database::loadConversations() {
 
-    QVector<Conversation> conversations;
+    QList<std::shared_ptr<Conversation>> conversations;
 
     QSqlQuery query;
     query.prepare("SELECT * FROM conversation");
@@ -83,11 +83,12 @@ QVector<Conversation> Database::loadConversations() {
             QString name = query.value(1).toString();
             QString ipAddress = query.value(2).toString();
             qint16 port = query.value(3).toInt();
-            Conversation conversation(name, ipAddress, port, loadMessages(conversation_id));
-            conversations.append(conversation);
+            Conversation conversation{name, ipAddress, port, loadMessages(conversation_id), conversation_id};
+            std::shared_ptr<Conversation> ptr{&conversation};
+            conversations.append(ptr);
         }
     }
-    return QVector<Conversation>();
+    return QList<std::shared_ptr<Conversation>>();
 }
 
 void Database::storeMessage(Message message) {

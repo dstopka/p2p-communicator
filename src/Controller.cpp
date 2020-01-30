@@ -32,7 +32,6 @@ void Controller::createNewConnection(QString name, const QString &ip, qint16 por
     emit newConnection(ip, QString::number(port), name);
     changeCurrentConversation(std::make_shared<Conversation>(name, ip, port));
     conversations.push_back(currentConversation);
-
 }
 
     void Controller::onNewMessage(const QString &str) {

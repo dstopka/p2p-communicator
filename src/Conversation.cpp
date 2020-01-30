@@ -6,7 +6,10 @@
 
 #include <utility>
 
+int Conversation::currentId=0;
+
 Conversation::Conversation(QString name, QTcpSocket *socket) : name(std::move(name)) {
+    id=currentId++;
     connection = std::make_unique<Connection>(socket);
     connect(connection.get(), SIGNAL(receivedMessage(
                                              const std::shared_ptr<Message> &)),
@@ -15,6 +18,7 @@ Conversation::Conversation(QString name, QTcpSocket *socket) : name(std::move(na
 }
 
 Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(std::move(name)) {
+    id=currentId++;
     connection = std::make_unique<Connection>(ip, port);
     connect(connection.get(), SIGNAL(receivedMessage(
                                              const std::shared_ptr<Message> &)),
@@ -22,7 +26,13 @@ Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(
                                const std::shared_ptr<Message> &)));
 }
 
-Conversation::Conversation(QString name, const QString &ip, qint16 port, QVector<std::shared_ptr<Message>> messages)  : name(std::move(name)) {
+Conversation::Conversation(QString name, const QString &ip, qint16 port, QVector<std::shared_ptr<Message>> messages, int id)  : name(std::move(name)) {
+    this->id=id;
+    if (currentId > id)
+        currentId++;
+    else
+        currentId=id+1;
+
     connection = std::make_unique<Connection>(ip, port);
     this->messages = std::move(messages);
     connect(connection.get(), SIGNAL(receivedMessage(
@@ -52,6 +62,10 @@ const QVector<std::shared_ptr<Message>> &Conversation::getMessages() {
 
 const std::unique_ptr<Connection> &Conversation::getConnection() const {
     return connection;
+}
+
+int Conversation::getId() {
+    return id;
 }
 
 

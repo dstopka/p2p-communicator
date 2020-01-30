@@ -21,7 +21,7 @@ public:
 
     explicit Conversation(QString name, const QString& ip, qint16 port);
 
-    explicit Conversation(QString name, const QString& ip, qint16 port, QVector<std::shared_ptr<Message>> messages);
+    explicit Conversation(QString name, const QString& ip, qint16 port, QVector<std::shared_ptr<Message>> messages, int id);
 
 
     void sendMessage(const QString &str);
@@ -32,10 +32,14 @@ public:
 
     const std::unique_ptr<Connection>& getConnection() const;
 
+    int getId();
+
 private:
     QVector<std::shared_ptr<Message>> messages;
     std::unique_ptr<Connection> connection;
     QString name;
+    int id;
+    static int currentId;
 
 signals:
 
