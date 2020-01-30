@@ -27,7 +27,7 @@ private:
     std::unique_ptr<QSqlDatabase> database;
     void storeFile(File file);
     static QVector<std::shared_ptr<Message>> loadMessages(int conversationId);
-    QVector<File> loadFiles();
+//    QVector<File> loadFiles();
 
 signals:
 

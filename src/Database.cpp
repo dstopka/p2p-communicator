@@ -88,7 +88,12 @@ QList<std::shared_ptr<Conversation>> Database::loadConversations() {
             std::shared_ptr<Conversation> ptr{&conversation};
             conversations.append(ptr);
         }
+        qDebug() << "Conversations selected successfully";
+    } else {
+        qDebug() << "Conversations select failed";
     }
+
+
     return QList<std::shared_ptr<Conversation>>();
 }
 
@@ -121,13 +126,17 @@ QVector<std::shared_ptr<Message>> Database::loadMessages(int conversationId) {
             std::shared_ptr<Message> ptr{&message};
             messages.append(ptr);
         }
+        qDebug() << "Messages selected successfully";
+    } else {
+        qDebug() << "Messages select failed";
     }
+
     return messages;
 }
 
-QVector<File> Database::loadFiles() {
+/*QVector<File> Database::loadFiles() {
     return QVector<File>();
-}
+}*/
 
 void Database::onNewMessage(const QString &text, int conversationId) {
 
