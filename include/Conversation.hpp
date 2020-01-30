@@ -36,6 +36,8 @@ public:
 
     int getId() const;
 
+    static void setCurrentId(int id);
+
 private:
     QVector<std::shared_ptr<Message>> messages;
     QVector<std::shared_ptr<File>> files;

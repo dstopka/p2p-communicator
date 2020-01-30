@@ -76,7 +76,7 @@ QList<std::shared_ptr<Conversation>> Database::loadConversations() {
     QList<std::shared_ptr<Conversation>> conversations;
 
     QSqlQuery query;
-    query.prepare("SELECT * FROM conversation");
+    query.prepare("SELECT * FROM conversation ORDER BY conversation_id ASC");
 
     if (query.exec()) {
         while (query.next()) {
@@ -85,9 +85,9 @@ QList<std::shared_ptr<Conversation>> Database::loadConversations() {
             QString name = query.value(1).toString();
             QString ipAddress = query.value(2).toString();
             qint16 port = query.value(3).toInt();
-            Conversation conversation{name, ipAddress, port, loadMessages(conversation_id), conversation_id};
-            std::shared_ptr<Conversation> ptr{&conversation};
+            std::shared_ptr<Conversation> ptr = std::make_shared<Conversation>(name, ipAddress, port, loadMessages(conversation_id), conversation_id);
             conversations.append(ptr);
+            qDebug() << ptr->getName();
         }
         qDebug() << "Conversations selected successfully";
     } else {
@@ -95,7 +95,7 @@ QList<std::shared_ptr<Conversation>> Database::loadConversations() {
     }
 
 
-    return QList<std::shared_ptr<Conversation>>();
+    return conversations;
 }
 
 void Database::storeMessage(const Message& message, int conversationId) {
@@ -129,8 +129,7 @@ QVector<std::shared_ptr<Message>> Database::loadMessages(int conversationId) {
         while (query.next()) {
             QString text = query.value(1).toString();
             bool sender = query.value(2).toBool();
-            Message message{text, sender};
-            std::shared_ptr<Message> ptr{&message};
+            std::shared_ptr<Message> ptr = std::make_shared<Message>(text, sender);
             messages.append(ptr);
         }
         qDebug() << "Messages selected successfully";

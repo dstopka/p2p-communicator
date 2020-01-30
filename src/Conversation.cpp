@@ -95,4 +95,8 @@ void Conversation::onReceivedFile(const std::shared_ptr<File> &file) {
     emit newMessage(messages.last()->getText(), id);
 }
 
+void Conversation::setCurrentId(int id) {
+    currentId=id;
+}
+
 

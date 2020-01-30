@@ -10,7 +10,17 @@ Controller::Controller() {
     server = std::make_unique<Server>();
     database = std::make_unique<Database>();
     connect(server.get(), SIGNAL(newConnection(QTcpSocket * )), this, SLOT(onNewConnection(QTcpSocket * )));
+    conversations.append(database->loadConversations());
 
+    if (!conversations.isEmpty()) {
+        qDebug() << "Loaded conversations";
+        for(const std::shared_ptr<Conversation>& conversation : conversations) {
+            QString ipAddress = conversation->getConnection()->getSocket()->peerAddress().toString();
+            qint16 port = conversation->getConnection()->getSocket()->peerPort();
+            emit newConnection(ipAddress, QString::number(port), conversation->getName());
+        }
+        Conversation::setCurrentId(conversations.last()->getId());
+    }
 }
 
 void Controller::acceptConnection(qint8 idx) {
