@@ -18,11 +18,11 @@ TEST(Connection, sendMessage) {
     QSignalSpy writeSpy(socket, SIGNAL(bytesWritten(qint64)));
     socket->connectToHost(QHostAddress::LocalHost, PORT);
     Connection c(socket);
-    connectSpy.wait(TIMEOUT);
+    if (connectSpy.count() == 0) connectSpy.wait(TIMEOUT);
     ASSERT_EQ(connectSpy.count(), 1);
 
     c.sendMessage(std::make_shared<Message>("test", true));
-    writeSpy.wait(TIMEOUT);
+    if (writeSpy.count() == 0) writeSpy.wait(TIMEOUT);
     ASSERT_EQ(writeSpy.count(), 1);
 
     serverThread.join();
@@ -36,11 +36,11 @@ TEST(Connection, sendStatus) {
     QSignalSpy writeSpy(socket, SIGNAL(bytesWritten(qint64)));
     socket->connectToHost(QHostAddress::LocalHost, PORT);
     Connection c(socket);
-    connectSpy.wait(TIMEOUT);
+    if (connectSpy.count() == 0) connectSpy.wait(TIMEOUT);
     ASSERT_EQ(connectSpy.count(), 1);
 
     c.sendStatus(Message::Status::ACCEPT);
-    writeSpy.wait(TIMEOUT);
+    if (writeSpy.count() == 0) writeSpy.wait(TIMEOUT);
     ASSERT_EQ(writeSpy.count(), 1);
 
     serverThread.join();
@@ -60,15 +60,15 @@ TEST(Connection, onReceivedData_message) {
     socket->connectToHost(QHostAddress::LocalHost, PORT);
     Connection c(socket);
     QSignalSpy receivedMessageSpy(&c, SIGNAL(receivedMessage(const std::shared_ptr<Message> &)));
-    connectSpy.wait(TIMEOUT);
+    if (connectSpy.count() == 0) connectSpy.wait(TIMEOUT);
     ASSERT_EQ(connectSpy.count(), 1);
 
     socket->write("mtest");
-    writeSpy.wait(TIMEOUT);
+    if (writeSpy.count() == 0) writeSpy.wait(TIMEOUT);
     ASSERT_EQ(writeSpy.count(), 1);
-    readSpy.wait(TIMEOUT);
+    if (readSpy.count() == 0) readSpy.wait(TIMEOUT);
     ASSERT_EQ(readSpy.count(), 1);
-    receivedMessageSpy.wait(TIMEOUT);
+    if (receivedMessageSpy.count() == 0) receivedMessageSpy.wait(TIMEOUT);
     ASSERT_EQ(receivedMessageSpy.count(), 1);
 
     serverThread.join();
@@ -84,15 +84,15 @@ TEST(Connection, onReceivedData_status) {
     socket->connectToHost(QHostAddress::LocalHost, PORT);
     Connection c(socket);
     QSignalSpy receivedStatusSpy(&c, SIGNAL(receivedStatus(QChar)));
-    connectSpy.wait(TIMEOUT);
+    if (connectSpy.count() == 0) connectSpy.wait(TIMEOUT);
     ASSERT_EQ(connectSpy.count(), 1);
 
     socket->write("sa");
-    writeSpy.wait(TIMEOUT);
+    if (writeSpy.count() == 0) writeSpy.wait(TIMEOUT);
     ASSERT_EQ(writeSpy.count(), 1);
-    readSpy.wait(TIMEOUT);
+    if (readSpy.count() == 0) readSpy.wait(TIMEOUT);
     ASSERT_EQ(readSpy.count(), 1);
-    receivedStatusSpy.wait(TIMEOUT);
+    if (receivedStatusSpy.count() == 0) receivedStatusSpy.wait(TIMEOUT);
     ASSERT_EQ(receivedStatusSpy.count(), 1);
 
     serverThread.join();
