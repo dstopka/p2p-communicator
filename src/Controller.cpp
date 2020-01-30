@@ -44,7 +44,8 @@ void Controller::createNewConnection(QString name, const QString &ip, qint16 por
     changeCurrentConversation(std::make_shared<Conversation>(name, ip, port));
     int index = conversations.size();
     connect(currentConversation.get(),&Conversation::status,
-            [this,index](){emit setAccepted(index);});
+            [this,index](){emit setAccepted(index);
+        database->storeConversation(*conversations[index]);});
     connect(currentConversation.get(), &Conversation::newMessage,
             database.get(), &Database::onNewMessage);
     conversations.push_back(currentConversation);
