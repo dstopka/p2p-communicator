@@ -49,7 +49,7 @@ signals:
 
 public slots:
 
-    void onNewMessage(const QString &);
+    void onNewMessage(const QString &, int conversationId);
     void onNewConnection(QTcpSocket *socket);
 
 };

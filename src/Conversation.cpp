@@ -53,7 +53,7 @@ QString Conversation::getName() const {
 
 void Conversation::onReceivedMessage(const std::shared_ptr<Message> &msg) {
     messages.push_back(msg);
-    emit newMessage(msg->getText());
+    emit newMessage(msg->getText(), id);
 }
 
 const QVector<std::shared_ptr<Message>> &Conversation::getMessages() {

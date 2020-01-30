@@ -34,7 +34,7 @@ void Controller::createNewConnection(QString name, const QString &ip, qint16 por
     conversations.push_back(currentConversation);
 }
 
-    void Controller::onNewMessage(const QString &str) {
+    void Controller::onNewMessage(const QString &str, int conversationId) {
     lastMessage = str;
     emit newMessage();
 }
@@ -45,11 +45,11 @@ const QString &Controller::getMessage() {
 
 void Controller::changeCurrentConversation(const std::shared_ptr<Conversation> &conversation) {
     if(currentConversation != nullptr)
-        disconnect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
-                   this, SLOT(onNewMessage(const QString &)));
+        disconnect(currentConversation.get(), SIGNAL(newMessage(const QString &, int conversationId)),
+                   this, SLOT(onNewMessage(const QString &, int conversationId)));
     currentConversation = conversation;
-    connect(currentConversation.get(), SIGNAL(newMessage(const QString &)),
-            this, SLOT(onNewMessage(const QString &)));
+    connect(currentConversation.get(), SIGNAL(newMessage(const QString &, int conversationId)),
+            this, SLOT(onNewMessage(const QString &, int conversationId)));
 
     int index = conversations.indexOf(conversation);
     if(index == -1)
