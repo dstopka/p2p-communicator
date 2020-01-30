@@ -35,8 +35,6 @@ public:
 
     int getId() const;
 
-    const std::unique_ptr<Connection> &getConnection();
-
 private:
     QVector<std::shared_ptr<Message>> messages;
     std::unique_ptr<Connection> connection;
