@@ -6,7 +6,7 @@
 
 #include <utility>
 
-QString Message::getText() {
+QString Message::getText() const {
     return text;
 }
 
@@ -14,11 +14,10 @@ void Message::setText(QString text) {
     this->text = std::move(text);
 }
 
-bool Message::isSender() {
+bool Message::isSender() const {
     return sender;
 }
 
 Message::Message(QString str, bool sent): text(std::move(str)), sender(sent) {
 
 };
-

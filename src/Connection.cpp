@@ -80,6 +80,10 @@ void Connection::sendMessage(const std::shared_ptr<Message> &msg) {
     stream << 'm' << msg->getText();
 }
 
+const std::unique_ptr<QTcpSocket>& Connection::getSocket() {
+    return socket;
+}
+
 void Connection::sendStatus(Message::Status status) {
     QTextStream stream(socket.get());
     QString str('s');

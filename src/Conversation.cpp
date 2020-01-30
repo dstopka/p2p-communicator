@@ -7,6 +7,8 @@
 #include <QDir>
 #include <utility>
 
+int Conversation::currentId=0;
+
 void Conversation::connectSlots()
 {
     connect(connection.get(), SIGNAL(receivedMessage(const std::shared_ptr<Message> &)),
@@ -18,17 +20,33 @@ void Conversation::connectSlots()
 }
 
 Conversation::Conversation(QString name, QTcpSocket *socket) : name(std::move(name)) {
+    id=currentId++;
     connection = std::make_unique<Connection>(socket);
     connectSlots();
 }
 
 Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(std::move(name)) {
+    id=currentId++;
     connection = std::make_unique<Connection>(ip, port);
     connectSlots();
 }
 
-void Conversation::sendMessage(const QString &str)
-{
+Conversation::Conversation(QString name, const QString &ip, qint16 port, QVector<std::shared_ptr<Message>> messages, int id)  : name(std::move(name)) {
+    this->id=id;
+    if (currentId > id)
+        currentId++;
+    else
+        currentId=id+1;
+
+    connection = std::make_unique<Connection>(ip, port);
+    this->messages = std::move(messages);
+    connect(connection.get(), SIGNAL(receivedMessage(
+                                             const std::shared_ptr<Message> &)),
+            this, SLOT(onReceivedMessage(
+                               const std::shared_ptr<Message> &)));
+}
+
+void Conversation::sendMessage(const QString &str) {
     std::shared_ptr<Message> msg = std::make_shared<Message>(str,true);
     messages.push_back(msg);
     connection->sendMessage(msg);
@@ -41,21 +59,26 @@ void Conversation::sendFile(const QString &str)
     messages.push_back(std::make_shared<Message>("<style type='text/css'>a{color: #ffffff;font-size:12px;}</style><a href='" + str + "'><i> "+file->getName()+"</i></a>",true));connection->sendFile(file);
 }
 
-QString Conversation::getName() {
+QString Conversation::getName() const {
     return name;
 }
 
 void Conversation::onReceivedMessage(const std::shared_ptr<Message> &msg) {
     messages.push_back(msg);
-    emit newMessage(msg->getText());
+    emit newMessage(msg->getText(), id);
 }
 
 const QVector<std::shared_ptr<Message>> &Conversation::getMessages() {
     return messages;
 }
 
-const std::unique_ptr<Connection> &Conversation::getConnection() {
+
+const std::unique_ptr<Connection> &Conversation::getConnection() const {
     return connection;
+}
+
+int Conversation::getId() const {
+    return id;
 }
 
 void Conversation::onReceivedStatus(QChar c) {
@@ -69,7 +92,11 @@ void Conversation::onReceivedStatus(QChar c) {
 void Conversation::onReceivedFile(const std::shared_ptr<File> &file) {
     files.push_back(file);
     messages.push_back(std::make_shared<Message>("<style type='text/css'>a{color: #ffffff;font-size:12px;}</style><a href='file://" + QDir::currentPath() + '/' + file->getName() + "'><i> "+file->getName()+"</i></a>",false));
-    emit newMessage(messages.last()->getText());
+    emit newMessage(messages.last()->getText(), id);
+}
+
+void Conversation::setCurrentId(int id) {
+    currentId=id;
 }
 
 

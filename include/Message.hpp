@@ -24,12 +24,11 @@ public:
 
     explicit Message(QString str, bool sent);
 
-
-    QString getText();
+    QString getText() const ;
 
     void setText(QString text);
 
-    bool isSender();
+    bool isSender() const ;
 
 
 private:
