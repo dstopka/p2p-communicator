@@ -26,7 +26,7 @@ Window {
                     messagesModel.append({'msgType':'received', 'src':source, 'msg':''})
                 }
                 else
-                    messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message), 'src':""})
+                    messagesModel.append({'msgType':'received', 'msg':controller.message, 'src':""})
         }
         onClearMessagesAndChangeCurrentConversation: {
             messagesModel.clear()
@@ -597,7 +597,7 @@ Window {
                                                 messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
                                             }
                                             else
-                                                messagesModel.append({'msgType':'sent', 'src':"", 'msg':messageArea.text})
+                                                messagesModel.append({'msgType':'sent', 'src':"", 'msg':qsTr(messageArea.text)})
                                             controller.sendMessage(file , 'f')
                                         }
                                         urls = []

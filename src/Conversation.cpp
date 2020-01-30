@@ -38,7 +38,7 @@ void Conversation::sendFile(const QString &str)
 {
     std::shared_ptr<File> file = std::make_shared<File>(str,true);
     files.push_back(file);
-    messages.push_back(std::make_shared<Message>("<style type='text/css'>a{color: #ffffff;font-size:12px;}</style><a href='file://" + QDir::currentPath() + '/' + file->getName() + "'><i> "+file->getName()+"</i></a>",true));connection->sendFile(file);
+    messages.push_back(std::make_shared<Message>("<style type='text/css'>a{color: #ffffff;font-size:12px;}</style><a href='" + str + "'><i> "+file->getName()+"</i></a>",true));connection->sendFile(file);
 }
 
 QString Conversation::getName() {
