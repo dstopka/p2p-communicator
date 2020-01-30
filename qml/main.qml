@@ -449,29 +449,43 @@ Window {
                 delegate: Rectangle {
                     anchors.topMargin: 10
                     width: messages.width * 0.6
-                    height: mssg.contentHeight + 12
+                    height: Math.max(mssg.contentHeight + 12, img.height)
                     color: msgType == 'sent' ? "#428bad" : "#4db3a3"
                     radius: 8
                     anchors.right: msgType == 'sent' ? parent.right : undefined
                     anchors.left: msgType == 'received' ? parent.left : undefined
                     anchors.rightMargin: msgType == 'sent' ? 10 : undefined
                     anchors.leftMargin: msgType == 'received' ? 10 : undefined
-                            Text {
+                            TextEdit {
                                 anchors.fill: parent
                                 anchors.leftMargin: 5
                                 id: mssg
                                 color: '#ffffff'
                                 text: msg
-                                font.pixelSize: 10
+                                font.pointSize: 9
                                 wrapMode: Text.Wrap
-                                verticalAlignment: Text.AlignVCenter
-                                //readOnly: true
                                 textFormat: Text.RichText
+                                verticalAlignment: Text.AlignVCenter
+                                readOnly: true
+                                selectByMouse: true
                                 onLinkActivated: Qt.openUrlExternally(link)
                                 MouseArea {
                                         anchors.fill: parent
                                         acceptedButtons: Qt.NoButton
                                         cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    }
+                            }
+                            Image {
+                                id: img
+                                source: src ? src : ""
+                                fillMode: Image.PreserveAspectFit
+                                sourceSize.width: messages.width * 0.6
+                                MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            Qt.openUrlExternally(parent.source)
+                                        }
                                     }
                             }
                     }
@@ -520,7 +534,7 @@ Window {
                         anchors.left: parent.left
                         anchors.leftMargin: 15
                         height: parent.height *0.67
-                        width: parent.width-70
+                        width: parent.width-70                        
                         TextArea {
                             id: messageArea
                             enabled: (!connectionsModel.count || connectionsModel.get(connections.currentIndex).pending || !connectionsModel.get(connections.currentIndex).connected) ? false : true
@@ -530,8 +544,8 @@ Window {
                             font.pixelSize: 14
                             selectByMouse: true
                             color: "#adadad"
-                            textFormat: Text.RichText
-                            //font.family: emojiFont.name
+                            property var urls: []
+                            //textFormat: Text.RichText
                             background: Rectangle {
                                 height: parent.height
                                 width: parent.width
@@ -543,17 +557,36 @@ Window {
                             }
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
-                                messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                                controller.message=messageArea.text
-                                messageArea.text=""
+                                    for(var file of urls)
+                                    {
+                                        console.log(file)
+                                        if(file.match(/.png$/i) || file.match(/.jpg$/i))
+                                        {
+                                            messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
+                                        }
+                                        controller.sendMessage(file , 'f')
+                                    }
+                                    urls = []
+                                    //else
+                                    //{
+                                        messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text), 'src':""})
+                                        controller.sendMessage(messageArea.text, 'm')
+                                    //}
+
+                                    messageArea.textFormat = Text.PlainText
+                                    messageArea.text=""
                                 }
                             }
                             DropArea {
+                                    id: drop
                                     anchors.fill: parent
                                     onDropped: {
                                         for(var file of drop.urls)
-                                            parent.text += '<html><style type="text/css">a{color: #ffffff;}</style><a href="' + file + '">' + file.match(/[^\/]+$/) + '</a></html>' + " "
-                                        parent.font.italic = true
+                                        {
+                                            parent.text += '<style type="text/css">a{color: #ffffff;font-size:12px;}</style><a href="' + file + '"><i>' + file.match(/[^\/]+$/) + '</i></a>' + " "
+                                            messageArea.urls.push(file)
+                                        }
+                                        messageArea.textFormat = Text.RichText
                                     }
                                 }
                     }
@@ -585,9 +618,13 @@ Window {
                         }
                         onClicked: {
                             if (messageArea.text != ""){
-                            messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                            controller.message=messageArea.text
-                            messageArea.text=""
+                                if(messageArea.text.includes('png') || messageArea.text.includes('jpg'))
+                                    messagesModel.append({'msgType':'sent', 'src':messageArea.text.match(/file.*\.jpg"/).toString().slice(0, -1)})
+                                else
+                                    messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
+                                controller.message=messageArea.text
+                                messageArea.textFormat = Text.PlainText
+                                messageArea.text=""
                             }
                         }
                     }

@@ -22,12 +22,17 @@ void Controller::onNewConnection(QTcpSocket *socket) {
     conversations.push_back(currentConversation);
 }
 
-void Controller::sendMessage(const QString &str) {
+void Controller::sendMessage(const QString &str, const QChar ind) {
     if (currentConversation != nullptr)
-        currentConversation->sendMessage(str);
-
-    Message message{str, true};
-    database->storeMessage(message, currentConversation->getId());
+    {
+        if(ind == 'm') {
+            currentConversation->sendMessage(str);
+            Message message{str, true};
+            database->storeMessage(message, currentConversation->getId());
+        }
+        else if (ind == 'f')
+            currentConversation->sendFile(str);
+    }
 }
 
 void Controller::createNewConnection(QString name, const QString &ip, qint16 port)
@@ -43,7 +48,7 @@ void Controller::createNewConnection(QString name, const QString &ip, qint16 por
 
     void Controller::onNewMessage(const QString &str, int conversationId) {
     lastMessage = str;
-    emit newMessage();
+    emit newMessage(str);
 }
 
 const QString &Controller::getMessage() {

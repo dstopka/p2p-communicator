@@ -4,6 +4,7 @@
 
 #include "include/Conversation.hpp"
 
+#include <QDir>
 #include <utility>
 
 int Conversation::currentId=0;
@@ -14,6 +15,8 @@ void Conversation::connectSlots()
             this, SLOT(onReceivedMessage(const std::shared_ptr<Message> &)));
     connect(connection.get(), SIGNAL(receivedStatus(QChar)),
             this, SLOT(onReceivedStatus(QChar)));
+    connect(connection.get(), SIGNAL(receivedFile(const std::shared_ptr<File> &)),
+            this, SLOT(onReceivedFile(const std::shared_ptr<File> &)));
 }
 
 Conversation::Conversation(QString name, QTcpSocket *socket) : name(std::move(name)) {
@@ -50,6 +53,14 @@ void Conversation::sendMessage(const QString &str) {
 }
 
 QString Conversation::getName() const {
+void Conversation::sendFile(const QString &str)
+{
+    std::shared_ptr<File> file = std::make_shared<File>(str,true);
+    files.push_back(file);
+    messages.push_back(std::make_shared<Message>("<style type='text/css'>a{color: #ffffff;font-size:12px;}</style><a href='file://" + QDir::currentPath() + '/' + file->getName() + "'><i> "+file->getName()+"</i></a>",true));connection->sendFile(file);
+}
+
+QString Conversation::getName() {
     return name;
 }
 
@@ -77,6 +88,12 @@ void Conversation::onReceivedStatus(QChar c) {
             emit status(Message::ACCEPT);
             break;
     }
+}
+
+void Conversation::onReceivedFile(const std::shared_ptr<File> &file) {
+    files.push_back(file);
+    messages.push_back(std::make_shared<Message>("<style type='text/css'>a{color: #ffffff;font-size:12px;}</style><a href='file://" + QDir::currentPath() + '/' + file->getName() + "'><i> "+file->getName()+"</i></a>",false));
+    emit newMessage(messages.last()->getText());
 }
 
 
