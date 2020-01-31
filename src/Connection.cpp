@@ -30,6 +30,7 @@ void Connection::onReceivedData() {
             case 'm': {
                 QTextStream stream(socket.get());
                 QString str;
+                qDebug() << "KURWAWIADOMOSC";
                 str = stream.readAll();
                 emit receivedMessage(std::make_shared<Message>(str, false));
                 break;
@@ -37,7 +38,7 @@ void Connection::onReceivedData() {
             case 's': {
                 QTextStream stream(socket.get());
                 QChar s;
-                stream >> s;
+                stream >> s;                
                 emit receivedStatus(s);
                 break;
             }

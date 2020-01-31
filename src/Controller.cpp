@@ -91,10 +91,12 @@ void Controller::loadConversations() {
 
         for(const std::shared_ptr<Conversation>& conversation : conversations) {
             QString ipAddress = conversation->getConnection()->getSocket()->peerAddress().toString().mid(7);
-
+            int index = conversation->getId();
+            connect(conversation.get(),&Conversation::status,
+                    [this,index](){emit setAccepted(index);});
             quint16 port = conversation->getConnection()->getSocket()->peerPort();
             qDebug() << ipAddress << ":" << port;
-
+            changeCurrentConversation(conversation);
             emit newConnection(conversation->getConnection()->ip, QString::number(conversation->getConnection()->port), conversation->getName());
         }
         Conversation::setCurrentId(conversations.last()->getId()+1);
