@@ -25,25 +25,24 @@ Conversation::Conversation(QString name, QTcpSocket *socket) : name(std::move(na
     connectSlots();
 }
 
-Conversation::Conversation(QString name, const QString& ip, qint16 port) : name(std::move(name)) {
+Conversation::Conversation(QString name, const QString& ip, quint16 port) : name(std::move(name)) {
     id=currentId++;
     connection = std::make_unique<Connection>(ip, port);
     connectSlots();
 }
 
-Conversation::Conversation(QString name, const QString &ip, qint16 port, QVector<std::shared_ptr<Message>> messages, int id)  : name(std::move(name)) {
+Conversation::Conversation(QString name, const QString &ip, quint16 port, QVector<std::shared_ptr<Message>> messages, int id)  : name(std::move(name)) {
     this->id=id;
     if (currentId > id)
         currentId++;
     else
         currentId=id+1;
 
+    qDebug() << ip << ":" << port;
     connection = std::make_unique<Connection>(ip, port);
+    qDebug() << connection->getSocket()->peerPort();
     this->messages = std::move(messages);
-    connect(connection.get(), SIGNAL(receivedMessage(
-                                             const std::shared_ptr<Message> &)),
-            this, SLOT(onReceivedMessage(
-                               const std::shared_ptr<Message> &)));
+    connectSlots();
 }
 
 void Conversation::sendMessage(const QString &str) {
