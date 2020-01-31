@@ -20,7 +20,7 @@ Q_OBJECT
                        isSender)
 
 public:
-    enum Status {ACCEPT};
+    enum Status {ACCEPT, REJECT};
 
     explicit Message(QString str, bool sent);
 

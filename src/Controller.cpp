@@ -17,6 +17,12 @@ void Controller::acceptConnection(qint8 idx) {
     database->storeConversation(*conversations[idx]);
 }
 
+void Controller::rejectConnection(qint8 idx)
+{
+    conversations[idx]->getConnection()->sendStatus(Message::REJECT);
+    conversations.removeAt(idx);
+}
+
 void Controller::onNewConnection(QTcpSocket *socket) {
     emit newPendingConnection(socket->peerAddress().toString().mid(7), QString::number(socket->peerPort()), "name");
     changeCurrentConversation(std::make_shared<Conversation>("name", socket));
@@ -44,15 +50,15 @@ void Controller::createNewConnection(QString name, const QString &ip, qint16 por
     changeCurrentConversation(std::make_shared<Conversation>(name, ip, port));
     int index = conversations.size();
     connect(currentConversation.get(),&Conversation::status,
-            [this,index](){emit setAccepted(index);
-        database->storeConversation(*conversations[index]);});
+            [this,index](Message::Status status){if(status == Message::REJECT) {emit setRejected(index);} else {emit setAccepted(index);
+        database->storeConversation(*conversations[index]);}});
     connect(currentConversation.get(), &Conversation::newMessage,
             database.get(), &Database::onNewMessage);
     conversations.push_back(currentConversation);
 
 }
 
-    void Controller::onNewMessage(const QString &str, int conversationId) {
+void Controller::onNewMessage(const QString &str, int conversationId) {
     lastMessage = str;
     emit newMessage(str);
 }

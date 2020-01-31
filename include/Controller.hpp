@@ -23,6 +23,7 @@ public:
     Q_INVOKABLE void sendMessage(const QString &str, const QChar ind);
     Q_INVOKABLE void createNewConnection(QString name, const QString& ip, qint16 port);
     Q_INVOKABLE void acceptConnection(qint8 idx);
+    Q_INVOKABLE void rejectConnection(qint8 idx);
     const QString &getMessage();
     Q_INVOKABLE void changeCurrentConversation(int index);
     Q_INVOKABLE void loadConversations();
@@ -44,6 +45,7 @@ signals:
     void clearMessagesAndChangeCurrentConversation(int index);
     void loadMessage(const QString &str, bool sender);
     void setAccepted(int index);
+    void setRejected(int index);
 
 public slots:
 

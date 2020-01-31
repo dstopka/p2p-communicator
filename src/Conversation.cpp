@@ -85,6 +85,9 @@ void Conversation::onReceivedStatus(QChar c) {
         case 'a':
             emit status(Message::ACCEPT);
             break;
+        case 'r':
+            emit status(Message::REJECT);
+            break;
     }
 }
 
