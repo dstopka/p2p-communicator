@@ -1,5 +1,6 @@
 
 @startuml
+note "komunikator p2p" as Title
 
 class Controller
 class Database
@@ -16,78 +17,134 @@ Conversation "1" *-- "many" Message : contains >
 Conversation "1" *-- "many" File : contains >
 Server ..> Conversation : create >
 Conversation "1" *-* "1" Connection : has one >
+Database ..> Conversation : Store
+Database ..> Message : Store
+Database ..> File : Store
 
+note right of Controller: Created in QML
 class Controller {
 manage everything
 ..
--std::shared_ptr<Conversation>
-currentConversation
--QVector<Conversation>
-conversations
--std::unique_ptr<Server>
-tcpServer
--std::unique_ptr<Database>
-db
+-std::unique_ptr<Server> server;
+-std::unique_ptr<Database> database;
+-std::shared_ptr<Conversation> currentConversation;
+-QList<std::shared_ptr<Conversation>> conversations;
+-QString lastMessage;
 --
-+Controller()
-+void onChangeConversation()
-+void onNewConnection(QTcpSocket*)
--bool acceptConncetion()
++Controller();
++Q_INVOKABLE void sendMessage(const QString &str, const QChar ind);
++Q_INVOKABLE void createNewConnection(QString name, const QString& ip, qint16 port);
++Q_INVOKABLE void acceptConnection(qint8 idx);
++Q_INVOKABLE void rejectConnection(qint8 idx);
++const QString &getMessage();
++Q_INVOKABLE void changeCurrentConversation(int index);
++Q_INVOKABLE void loadConversations();
+-void changeCurrentConversation(const std::shared_ptr<Conversation>& conversation);
+..signals..
+-void newMessage(const QString &str);
+-void newConnection(QString ipAdress, QString port, QString name);
+-void newPendingConnection(QString ipAdress, QString port, QString name);
+-void clearMessagesAndChangeCurrentConversation(int index);
+-void loadMessage(const QString &str, bool sender);
+-void setAccepted(int index);
+-void setRejected(int index);
+..slots..
++void onNewMessage(const QString &, int conversationId);
++void onNewConnection(QTcpSocket *socket);
 }
 
 class Conversation {
+-QVector<std::shared_ptr<Message>> messages;
+-QVector<std::shared_ptr<File>> files;
+-std::unique_ptr<Connection> connection;
+-QString name;
+-int id;
+-{static} int currentId;
+--
 +Conversation(QTcpSocket*)
-+void sendMessage()
-+void onReceivedMessage()
-+void setName(QString name)
-+QString getName()
-+QVector<Message> getMessages()
-+QVector<File> getFiles()
--QVector<Message> messages
--QVector<File> files
--QString name
--std::unique_ptr<Connection>
-connection
--bool isConnected
++Conversation(QString name, const QString& ip, quint16 port);
++Conversation(QString name, const QString& ip, quint16 port, QVector<std::shared_ptr<Message>> messages, int id);
++void sendMessage(const QString &str);
++void sendFile(const QString &str);
++const QVector<std::shared_ptr<Message>> &getMessages();
+QString getName() const;
++const std::unique_ptr<Connection>& getConnection() const;
++int getId() const;
++{static} void setCurrentId(int id);
+-void connectSlots();
+..signals..
+-void newMessage(const QString &text, int conversationId);
+-void status(Message::Status);
+..slots..
++void onReceivedMessage(const std::shared_ptr<Message> &);
++void onReceivedStatus(QChar c);
++void onReceivedFile(const std::shared_ptr<File> &file);
 }
 
 class Message {
++enum Status {ACCEPT, REJECT};
++Message(QString str, bool sent);
 +QString getText()
-+void setText()
++void setText(QString text)
++bool isSender()
 -QString text
--bool isSender
+-bool sender
 }
 
 class Server {
-manage incoming connection
+manages incoming connection
 ..
--QTcpServer tcpServer
+-std::unique_ptr<QTcpServer> server;
 --
++Server(QObject *parent = nullptr);
+..signals..
+-void newConnection(QTcpSocket *);
+..slots..
 +void makeNewConnection()
 }
 
 class Connection {
-+void onReceivedMessage()
-+void onSentMessage()
--QTcpSocket socket
++quint16 port;
++QString ip;
+-bool isReadingFile=false;
+-quint64 lastBytes=0;
+-QFile in;
+-std::unique_ptr<QTimer> timer;
+-std::unique_ptr<QTcpSocket> socket;
+--
++Connection(QTcpSocket *);
++Connection(const QString &ip, quint16 port);
++void sendMessage(const std::shared_ptr<Message> &msg);
++void sendStatus(Message::Status status);
++void sendFile(const std::shared_ptr<File> &file);
++const std::unique_ptr<QTcpSocket>& getSocket();
+-void setup();
+..signals..
+-void receivedMessage(const std::shared_ptr<Message> &);
+-void receivedStatus(QChar);
+-void receivedFile(const std::shared_ptr<File> &file);
+..slots..
++void onReceivedData();
 }
 
 class File {
 +QString getName()
++bool isSender()
 -QFile file
--bool isSender
+-bool sender
 }
 
 class Database {
 -std::unique_ptr<QSqlDatabase>
+--
 +void storeConversation(const Conversation&)
-+void onNewMessage(const QString&)
-+void onNewFile(const File&)
 +QVector<Conversation> loadConversations()
 -void storeMessage(const Message&)
 -void storeFile(const File&)
 -QVector<Message> loadMessages()
 -QVector<File>  loadFiles()
+..slots..
++void onNewMessage(const QString&)
 }
 
 @enduml
