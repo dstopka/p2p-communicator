@@ -16,9 +16,60 @@ Window {
 
     Controller {
         id: controller
+        onNewMessage:
+        {
+                if(controller.message.match(/file.*png/i) || controller.message.match(/file.*jpg/i))
+                {
+                    var source = controller.message.match(/file.*'\>/i)
+                    source = source[0].toString().slice(0, -2)
+                    console.log(source)
+                    messagesModel.append({'msgType':'received', 'src':source, 'msg':''})
+                }
+                else
+                    messagesModel.append({'msgType':'received', 'msg':controller.message, 'src':""})
+        }
+        onClearMessagesAndChangeCurrentConversation: {
+            messagesModel.clear()
+            connections.currentIndex = index
+        }
+        onLoadMessage:{
+            var source
+            if(!sender)
+            {
+                if(str.match(/file.*png/i) || str.match(/file.*jpg/i))
+                {
+                    source = str.match(/file.*'\>/i)
+                    source = source[0].toString().slice(0, -2)
+                    messagesModel.append({'msgType':'received', 'src':source, 'msg':''})
+                }
+                else
+                    messagesModel.append({'msgType':'received', 'msg':qsTr(str), 'src':""})
+            }
+            else
+            {
+                if(str.match(/file.*png/i) || str.match(/file.*jpg/i))
+                {
+                    source = str.match(/file.*'\>/i)
+                    source = source[0].toString().slice(0, -2)
+                    messagesModel.append({'msgType':'sent', 'src':source, 'msg':''})
+                }
+                else
+                    messagesModel.append({'msgType':'sent', 'msg':qsTr(str), 'src':""})
+            }
+        }
+        onNewConnection:
+        {
+            connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
+        }
 
-        onNewMessage: messagesModel.append({'msgType':'received', 'msg':qsTr(controller.message)})
-     }
+        onNewPendingConnection: connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':true})
+        onSetAccepted: {
+            connectionsModel.setProperty(index, "connected", true)
+        }
+        Component.onCompleted: {controller.loadConversations()}
+    }
+
+
     //---------CONNECTIONS PANNEL---------------
 
     Rectangle {
@@ -40,9 +91,10 @@ Window {
             anchors.bottom: parent.bottom
             model: ListModel {
                 id: connectionsModel
+                property var pending: null
             }
             delegate: Rectangle {
-                height: 50
+                height: 55
                 width: parent.width
                 color: connections.currentIndex === index ? "#595959" : "#3b3b3b"
                 Rectangle {
@@ -53,12 +105,12 @@ Window {
                 }
                 Rectangle {
                     id: logoType
-                    height: 40
-                    width: 40
+                    height: 42.5
+                    width: 42.5
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 10
-                    radius: 20
+                    radius: width / 2
                     color: Qt.rgba(Math.random(),Math.random(),Math.random(), 1)
                     border.color: "#2e2e2e"
                     border.width: 1
@@ -86,7 +138,7 @@ Window {
                         text: als
                         color: "#adadad"
                         font.bold: true
-                        font.pixelSize: 16
+                        font.pixelSize: 15
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
                     Label {
@@ -95,19 +147,19 @@ Window {
                         anchors.topMargin: 2
                         text: ip + ":" + port
                         color: "#adadad"
-                        font.pixelSize: 10
+                        font.pixelSize: 9
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
                     Rectangle {
                         id: connectionIdenticator
-                        visible: connected ? false : true
+                        visible: (!connected && !pending) ? true : false
                         color: '#ff0000'
                         width: 8
                         height: 8
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        anchors.margins: 3
+                        anchors.margins: 6
                         radius: 4
                         SequentialAnimation {
                             running: true
@@ -129,22 +181,106 @@ Window {
                         }
                     }
                     Rectangle {
-                        visible: connected ? true : false
+                        visible: (connected && !pending) ? true : false
                         color: '#00ff00'
                         width: 8
                         height: 8
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        anchors.margins: 3
+                        anchors.margins: 6
                         radius: 4
                     }
-                }
+
+                    //-------------ACCEPT/REJECT BUTTONS
+
+                    Rectangle {
+                        id: acceptConnectionButton
+                        z: 2
+                        visible: pending ? true : false
+                        anchors.top: ipPortLabel.bottom
+                        anchors.topMargin: 2
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -width / 2
+                        anchors.leftMargin: 3
+                        implicitWidth: acceptConnectionButtonText.contentWidth + 20
+                        implicitHeight: 16
+                        color: "#008502"
+                        radius: 6
+                        border.color: "#005701"
+                        border.width: 1
+                        Text {
+                            id: acceptConnectionButtonText
+                            text: "ACCEPT"
+                            anchors.centerIn: parent
+                            font.pixelSize: 9
+                            color: '#ffffff'
+                        }
+                        MouseArea {
+                            id: acceptConnectionButtonMouseArea
+                            z: 2
+                            hoverEnabled: true
+                            anchors.fill: parent
+                            onEntered: {
+                                parent.color = "#00b503"
+                            }
+                            onExited: {
+                                parent.color = "#008502"
+                            }
+                            onClicked: {
+                                controller.acceptConnection(index)
+                                connectionsModel.setProperty(index, "pending", false)
+                                connectionsModel.setProperty(index, "connected", true)
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: rejectConnectionButton
+                        visible: pending ? true : false
+                        anchors.top: ipPortLabel.bottom
+                        anchors.topMargin: 2
+                        anchors.left: acceptConnectionButton.right
+                        anchors.leftMargin: 3
+                        implicitWidth: rejectConnectionButtonText.contentWidth + 20
+                        implicitHeight: 16
+                        color: "#ad0000"
+                        radius: 6
+                        border.color: "#6e0000"
+                        border.width: 1
+                        //z:2
+                        Text {
+                            id: rejectConnectionButtonText
+                            text: "Reject"
+                            anchors.centerIn: parent
+                            font.pixelSize: 9
+                            color: '#ffffff'
+                        }
+                        MouseArea {
+                            id: rejectConnectionButtonMouseArea
+                            hoverEnabled: true
+                            anchors.fill: parent
+                            onEntered: {
+                                parent.color = "#ff0000"
+                            }
+                            onExited: {
+                                parent.color = "#ad0000"
+                            }
+                            onClicked: {
+                                connectionsModel.remove(index)
+                                controller.rejectConnection(index)
+                            }
+                        }
+                    }
                 MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: connections.currentIndex = index
-                                }
+                       anchors.fill: parent
+                       onClicked: {
+                             connections.currentIndex = index
+                             controller.changeCurrentConversation(index)
+                        }
+                 }
             }
 
+         }
          }
 
         //---------NEW CONNECTION---------------
@@ -194,7 +330,15 @@ Window {
                      border.color: "#242424"
                      border.width: 1
                  }
-             }
+                 Keys.onReturnPressed: {
+                     if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                         controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                         newIpInput.text = ""
+                         newAliasInput.text = ""
+                         newPortInput.text = ""
+                     }
+                 }
+
 
 
 
@@ -211,14 +355,22 @@ Window {
                 verticalAlignment: TextInput.AlignVCenter
                 horizontalAlignment: TextInput.AlignHCenter
                 color: "#adadad"
-                validator: RegExpValidator { regExp: /(([0-9]{1,3}\.){3}[0-9]{1,3} | localhost)/ }
+                validator: RegExpValidator { regExp: /([0-9]{1,3}\.){3}[0-9]{1,3}/ }
                 background: Rectangle {
                     radius: 8
                     color: "#2e2e2e"
                     border.color: "#242424"
                     border.width: 1
                 }
-            }
+                Keys.onReturnPressed: {
+                    if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                        controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                        newIpInput.text = ""
+                        newAliasInput.text = ""
+                        newPortInput.text = ""
+                    }
+                }
+
 
 
             TextField {
@@ -241,7 +393,15 @@ Window {
                     border.color: "#242424"
                     border.width: 1
                 }
-            }
+                Keys.onReturnPressed: {
+                    if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
+                        controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
+                        newIpInput.text = ""
+                        newAliasInput.text = ""
+                        newPortInput.text = ""
+                    }
+                }
+
 
 
             Rectangle {
@@ -276,19 +436,17 @@ Window {
                     }
                     onClicked: {
                         if(newPortInput.acceptableInput && newAliasInput.text !== "" && newIpInput.acceptableInput)
-                            connectionsModel.append({'ip':newIpInput.text, 'port':newPortInput.text, 'als':newAliasInput.text, 'connected':false})
+                            controller.createNewConnection(newAliasInput.text, newIpInput.text, newPortInput.text)
                             newIpInput.text = ""
                             newAliasInput.text = ""
                             newPortInput.text = ""
+                            forceActiveFocus()
                         }
                     }
                 }
+
             }
-
-
-         }
-
-
+    }
     //---------MESSAGES PANNEL---------------
 
     Rectangle {
@@ -296,8 +454,9 @@ Window {
         y: 0
         width: 0.5*parent.width
         height: parent.height
-        anchors.right: bgFiles.left
+        anchors.right: bgRightPanel.left
         color: "#2e2e2e"
+        //FontLoader { id: emojiFont; source: "qrc://qml/resource/NotoSans.ttf"; }
 
         Rectangle {
                 id: borderLeftBgMessages
@@ -332,27 +491,48 @@ Window {
                 delegate: Rectangle {
                     anchors.topMargin: 10
                     width: messages.width * 0.6
-                    height: mssg.contentHeight + 12
+                    height: Math.max(mssg.contentHeight + 12, img.height)
                     color: msgType == 'sent' ? "#428bad" : "#4db3a3"
                     radius: 8
                     anchors.right: msgType == 'sent' ? parent.right : undefined
                     anchors.left: msgType == 'received' ? parent.left : undefined
                     anchors.rightMargin: msgType == 'sent' ? 10 : undefined
                     anchors.leftMargin: msgType == 'received' ? 10 : undefined
-                            TextArea {
+                            TextEdit {
                                 anchors.fill: parent
                                 anchors.leftMargin: 5
                                 id: mssg
-                                color: 'white'
+                                color: '#ffffff'
                                 text: msg
-                                font.pixelSize: 10
+                                font.pointSize: 9
                                 wrapMode: Text.Wrap
+                                textFormat: Text.RichText
                                 verticalAlignment: Text.AlignVCenter
                                 readOnly: true
+                                selectByMouse: true
+                                onLinkActivated: Qt.openUrlExternally(link)
+                                MouseArea {
+                                        anchors.fill: parent
+                                        acceptedButtons: Qt.NoButton
+                                        cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    }
+                            }
+                            Image {
+                                id: img
+                                source: src ? src : ""
+                                fillMode: Image.PreserveAspectFit
+                                sourceSize.width: messages.width * 0.6
+                                MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            Qt.openUrlExternally(parent.source)
+                                        }
+                                    }
                             }
                     }
                 onCountChanged: {
-                               var newIndex = count - 1 // last index
+                    var newIndex = count - 1
                     positionViewAtEnd()
                     currentIndex = newIndex
                 }
@@ -396,15 +576,18 @@ Window {
                         anchors.left: parent.left
                         anchors.leftMargin: 15
                         height: parent.height *0.67
-                        width: parent.width-70
+                        width: parent.width-70                        
                         TextArea {
                             id: messageArea
+                            enabled: (!connectionsModel.count || connectionsModel.get(connections.currentIndex).pending || !connectionsModel.get(connections.currentIndex).connected) ? false : true
                             placeholderText: "Type your message..."
                             verticalAlignment: TextEdit.AlignVCenter
                             wrapMode: TextArea.Wrap
                             font.pixelSize: 14
                             selectByMouse: true
                             color: "#adadad"
+                            property var urls: []
+                            //textFormat: Text.RichText
                             background: Rectangle {
                                 height: parent.height
                                 width: parent.width
@@ -414,16 +597,44 @@ Window {
                                 border.color: '#1f1f1f'
                                 border.width: 1
                             }
-                            //onActiveFocusChanged: {
-                            //    messageArea.text=""
-                            //}
                             Keys.onReturnPressed: {
                                 if (messageArea.text != ""){
-                                messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                                controller.message=messageArea.text
-                                messageArea.text=""
+                                    if(urls.length > 0 ){
+                                        for(var file of urls)
+                                        {
+                                            console.log(file)
+                                            if(file.match(/.png$/i) || file.match(/.jpg$/i))
+                                            {
+                                                messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
+                                            }
+                                            else
+                                                messagesModel.append({'msgType':'sent', 'src':"", 'msg':qsTr(messageArea.text)})
+                                            controller.sendMessage(file , 'f')
+                                        }
+                                        urls = []
+                                    }
+                                    else
+                                    {
+                                        messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text), 'src':""})
+                                        controller.sendMessage(messageArea.text, 'm')
+                                    }
+
+                                    messageArea.textFormat = Text.PlainText
+                                    messageArea.text=""
                                 }
                             }
+                            DropArea {
+                                    id: drop
+                                    anchors.fill: parent
+                                    onDropped: {
+                                        for(var file of drop.urls)
+                                        {
+                                            parent.text += '<style type="text/css">a{color: #ffffff;font-size:12px;}</style><a href="' + file + '"><i>' + file.match(/[^\/]+$/) + '</i></a>' + " "
+                                            messageArea.urls.push(file)
+                                        }
+                                        messageArea.textFormat = Text.RichText
+                                    }
+                                }
                     }
                 }
                 Rectangle {
@@ -453,9 +664,28 @@ Window {
                         }
                         onClicked: {
                             if (messageArea.text != ""){
-                            messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                            messageArea.text=""
-                            //forceActiveFocus()
+                                if(urls.length > 0 ){
+                                    for(var file of urls)
+                                    {
+                                        console.log(file)
+                                        if(file.match(/.png$/i) || file.match(/.jpg$/i))
+                                        {
+                                            messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
+                                        }
+                                        else
+                                            messagesModel.append({'msgType':'sent', 'src':"", 'msg':qsTr(messageArea.text)})
+                                        controller.sendMessage(file , 'f')
+                                    }
+                                    urls = []
+                                }
+                                else
+                                {
+                                    messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text), 'src':""})
+                                    controller.sendMessage(messageArea.text, 'm')
+                                }
+
+                                messageArea.textFormat = Text.PlainText
+                                messageArea.text=""
                             }
                         }
                     }
@@ -464,40 +694,15 @@ Window {
 
     }
 
-    //---------SENT FILES PANNEL---------------
+    //---------RIGHT PANNEL---------------
 
     Rectangle {
-        id: bgFiles
-
+        id: bgRightPanel
         color: "#3b3b3b"
         y: 0
         width: 0.2*parent.width
         height: parent.height
-        anchors.right: parent.right
-
-        ListView {
-            id: files
-            anchors.fill: parent
-            delegate: Item {
-                x: 5
-                width: 80
-                height: 40
-                Row {
-                    id: row3
-                    spacing: 10
-                    Rectangle {
-                        width: 40
-                        height: 40
-                        color: colorCode
-                    }
-
-                    Text {
-                        text: name
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
-                    }
-                }
-            }
+        anchors.right: parent.right     
         }
     }
-}
+

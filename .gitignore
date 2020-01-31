@@ -1,5 +1,6 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
+*.db
 .idea
 cmake-build-debug
 !.keep
@@ -14,6 +15,7 @@ cmake-build-debug
 *.rej
 *.so
 *.so.*
+*.png
 *_pch.h.cpp
 *_resource.rc
 *.qm

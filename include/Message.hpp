@@ -9,9 +9,31 @@
 
 class Message : public QObject {
 Q_OBJECT
+
+    Q_PROPERTY(QString text
+                       READ
+                               getText
+                       WRITE
+                       setText)
+    Q_PROPERTY(bool sender
+                       READ
+                       isSender)
+
 public:
+    enum Status {ACCEPT, REJECT};
+
+    explicit Message(QString str, bool sent);
+
+    QString getText() const ;
+
+    void setText(QString text);
+
+    bool isSender() const ;
+
 
 private:
+    QString text;
+    bool sender;
 
 signals:
 

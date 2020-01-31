@@ -5,7 +5,6 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
     std::unique_ptr<QCoreApplication> app = std::make_unique<QGuiApplication>(argc, argv);
     std::unique_ptr<QQmlApplicationEngine> engine = std::make_unique<QQmlApplicationEngine>();
 

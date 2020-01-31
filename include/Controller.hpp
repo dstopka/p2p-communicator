@@ -15,16 +15,18 @@
 class Controller : public QObject {
 Q_OBJECT
     Q_PROPERTY(QString message
-                       WRITE
-                       sendMessage
                        READ
                        getMessage)
 public:
     Controller();
 
-    void sendMessage(const QString &str);
-
+    Q_INVOKABLE void sendMessage(const QString &str, const QChar ind);
+    Q_INVOKABLE void createNewConnection(QString name, const QString& ip, qint16 port);
+    Q_INVOKABLE void acceptConnection(qint8 idx);
+    Q_INVOKABLE void rejectConnection(qint8 idx);
     const QString &getMessage();
+    Q_INVOKABLE void changeCurrentConversation(int index);
+    Q_INVOKABLE void loadConversations();
 
 private:
     std::unique_ptr<Server> server;
@@ -33,16 +35,23 @@ private:
     QList<std::shared_ptr<Conversation>> conversations;
     QString lastMessage;
 
-    bool acceptConnection();
+    void changeCurrentConversation(const std::shared_ptr<Conversation>& conversation);
 
 signals:
 
-    void newMessage();
+    void newMessage(const QString &str);
+    void newConnection(QString ipAdress, QString port, QString name);
+    void newPendingConnection(QString ipAdress, QString port, QString name);
+    void clearMessagesAndChangeCurrentConversation(int index);
+    void loadMessage(const QString &str, bool sender);
+    void setAccepted(int index);
+    void setRejected(int index);
 
 public slots:
 
-    void onNewMessage(const QString &);
+    void onNewMessage(const QString &, int conversationId);
     void onNewConnection(QTcpSocket *socket);
+
 };
 
 

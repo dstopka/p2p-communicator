@@ -82,10 +82,14 @@ class File {
 
 class Database {
 -std::unique_ptr<QSqlDatabase>
-db
-+void storeConversation(conversation)
--void storeMessage(Message)
--void storeFile(File)
++void storeConversation(const Conversation&)
++void onNewMessage(const QString&)
++void onNewFile(const File&)
++QVector<Conversation> loadConversations()
+-void storeMessage(const Message&)
+-void storeFile(const File&)
+-QVector<Message> loadMessages()
+-QVector<File>  loadFiles()
 }
 
 @enduml
