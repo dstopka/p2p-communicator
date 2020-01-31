@@ -61,8 +61,11 @@ void Database::storeConversation(const Conversation& conversation) {
     query.bindValue(":name", conversation.getName());
 //    int port = conversation.getConnection()->getSocket()->peerPort();
     quint16 port = 8000;
-    QHostAddress ipAddress = conversation.getConnection()->getSocket()->peerAddress();
-    query.bindValue(":ip_address", ipAddress.toString());
+    QString ipAddress = conversation.getConnection()->getSocket()->peerAddress().toString();
+    if(ipAddress.contains(QRegExp("::")))
+        query.bindValue(":ip_address", ipAddress.mid(7));
+    else
+        query.bindValue(":ip_address", ipAddress);
     query.bindValue(":port", port);
 
     if (query.exec()) {

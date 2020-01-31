@@ -12,6 +12,7 @@
 #include <QTcpSocket>
 #include <QDataStream>
 #include <QFile>
+#include <QTimer>
 #include <memory>
 
 class Connection : public QObject {
@@ -33,7 +34,10 @@ private:
     bool isReadingFile=false;
     quint64 lastBytes=0;
     QFile in;
+    std::unique_ptr<QTimer> timer;
     std::unique_ptr<QTcpSocket> socket;
+
+    void setup();
 
 signals:
     void receivedMessage(const std::shared_ptr<Message> &);

@@ -59,7 +59,6 @@ Window {
         }
         onNewConnection:
         {
-            console.log("ELOWINA")
             connectionsModel.append({'ip':ipAdress, 'port':port, 'als':name, 'connected':false, 'pending':false})
         }
 
@@ -248,6 +247,7 @@ Window {
                         radius: 6
                         border.color: "#6e0000"
                         border.width: 1
+                        //z:2
                         Text {
                             id: rejectConnectionButtonText
                             text: "Reject"
@@ -266,17 +266,18 @@ Window {
                                 parent.color = "#ad0000"
                             }
                             onClicked: {
-
+                                connectionsModel.remove(index)
+                                controller.rejectConnection(index)
                             }
                         }
                     }
                 MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        connections.currentIndex = index
-                                        controller.changeCurrentConversation(index)
-                                    }
-                                }
+                       anchors.fill: parent
+                       onClicked: {
+                             connections.currentIndex = index
+                             controller.changeCurrentConversation(index)
+                        }
+                 }
             }
 
          }
@@ -453,7 +454,7 @@ Window {
         y: 0
         width: 0.5*parent.width
         height: parent.height
-        anchors.right: bgFiles.left
+        anchors.right: bgRightPanel.left
         color: "#2e2e2e"
         //FontLoader { id: emojiFont; source: "qrc://qml/resource/NotoSans.ttf"; }
 
@@ -663,11 +664,26 @@ Window {
                         }
                         onClicked: {
                             if (messageArea.text != ""){
-                                if(messageArea.text.includes('png') || messageArea.text.includes('jpg'))
-                                    messagesModel.append({'msgType':'sent', 'src':messageArea.text.match(/file.*\.jpg"/).toString().slice(0, -1)})
+                                if(urls.length > 0 ){
+                                    for(var file of urls)
+                                    {
+                                        console.log(file)
+                                        if(file.match(/.png$/i) || file.match(/.jpg$/i))
+                                        {
+                                            messagesModel.append({'msgType':'sent', 'src':file, 'msg':''})
+                                        }
+                                        else
+                                            messagesModel.append({'msgType':'sent', 'src':"", 'msg':qsTr(messageArea.text)})
+                                        controller.sendMessage(file , 'f')
+                                    }
+                                    urls = []
+                                }
                                 else
-                                    messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text)})
-                                controller.message=messageArea.text
+                                {
+                                    messagesModel.append({'msgType':'sent', 'msg':qsTr(messageArea.text), 'src':""})
+                                    controller.sendMessage(messageArea.text, 'm')
+                                }
+
                                 messageArea.textFormat = Text.PlainText
                                 messageArea.text=""
                             }
@@ -678,41 +694,15 @@ Window {
 
     }
 
-    //---------SENT FILES PANNEL---------------
+    //---------RIGHT PANNEL---------------
 
     Rectangle {
-        id: bgFiles
-
+        id: bgRightPanel
         color: "#3b3b3b"
         y: 0
         width: 0.2*parent.width
         height: parent.height
-        anchors.right: parent.right
-
-        ListView {
-            id: files
-            anchors.fill: parent
-            delegate: Item {
-                x: 5
-                width: 80
-                height: 40
-                Row {
-                    id: row3
-                    spacing: 10
-                    Rectangle {
-                        width: 40
-                        height: 40
-                        color: colorCode
-                    }
-
-                    Text {
-                        text: name
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
-                    }
-                }
-            }
+        anchors.right: parent.right     
         }
     }
-}
 
