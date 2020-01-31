@@ -87,7 +87,6 @@ void Connection::onReceivedData() {
             isReadingFile = false;
             socket->flush();
             receivedFile(std::make_shared<File>(in.fileName(), false));
-            qDebug() << "koniec KURWA";
         }
         delete[] data;
     }
