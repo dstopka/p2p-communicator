@@ -95,7 +95,7 @@ void Controller::loadConversations() {
             quint16 port = conversation->getConnection()->getSocket()->peerPort();
             qDebug() << ipAddress << ":" << port;
 
-            emit newConnection(ipAddress, QString::number(port), conversation->getName());
+            emit newConnection(conversation->getConnection()->ip, QString::number(conversation->getConnection()->port), conversation->getName());
         }
         Conversation::setCurrentId(conversations.last()->getId()+1);
     }

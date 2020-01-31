@@ -26,6 +26,8 @@ public:
     explicit Connection(const QString &ip, quint16 port);
 
     const std::unique_ptr<QTcpSocket>& getSocket();
+    quint16 port;
+    QString ip;
 
 private:
     bool isReadingFile=false;

@@ -5,6 +5,7 @@
 #include <QtCore/QtAlgorithms>
 #include "include/File.hpp"
 #include "include/Connection.hpp"
+#include <QHostAddress>
 
 
 Connection::Connection(QTcpSocket *sock) {
@@ -12,9 +13,11 @@ Connection::Connection(QTcpSocket *sock) {
     connect(socket.get(), SIGNAL(readyRead()), this, SLOT(onReceivedData()));
 }
 
-Connection::Connection(const QString &ip, quint16 port) {
+Connection::Connection(const QString &ip, quint16 port) : port(port), ip(ip){
+    qDebug() << ip << "    " << port;
     socket = std::make_unique<QTcpSocket>();
     socket->connectToHost(ip, port);
+    qDebug() << socket->peerPort();
     connect(socket.get(), SIGNAL(readyRead()), this, SLOT(onReceivedData()));
 }
 

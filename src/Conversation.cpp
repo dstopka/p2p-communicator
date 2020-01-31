@@ -40,7 +40,7 @@ Conversation::Conversation(QString name, const QString &ip, quint16 port, QVecto
 
     qDebug() << ip << ":" << port;
     connection = std::make_unique<Connection>(ip, port);
-    qDebug() << connection->getSocket()->peerAddress()->
+    qDebug() << connection->getSocket()->peerPort();
     this->messages = std::move(messages);
     connectSlots();
 }
