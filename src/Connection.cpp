@@ -11,7 +11,7 @@ void Connection::setup(){
     timer = std::make_unique<QTimer>();
     connect(timer.get(),&QTimer::timeout,
             [this](){socket->connectToHost(ip,port);
-                qDebug()<<"try to connect!";});
+                qDebug()<<"trying to connect!";});
     timer->start(10'000);
     connect(socket.get(),&QTcpSocket::connected,
             [this](){timer->stop();
@@ -19,21 +19,21 @@ void Connection::setup(){
     connect(socket.get(),&QTcpSocket::disconnected,
             [this](){timer->start(10'000);
                 qDebug()<<"LOST CONNECTION!";});
+    connect(socket.get(), SIGNAL(readyRead()), this, SLOT(onReceivedData()));
 }
 
 Connection::Connection(QTcpSocket *sock) {
+    socket = std::unique_ptr<QTcpSocket>(sock);
+    ip= sock->peerAddress().toString().mid(7);
+    port = sock->peerPort();
     setup();
     timer->stop();
-    socket = std::unique_ptr<QTcpSocket>(sock);
-    connect(socket.get(), SIGNAL(readyRead()), this, SLOT(onReceivedData()));
 }
 
 Connection::Connection(const QString &ip, quint16 port) : port(port), ip(ip){
-    setup();
     socket = std::make_unique<QTcpSocket>();
     socket->connectToHost(ip, port);
-    qDebug() << socket->peerPort();
-    connect(socket.get(), SIGNAL(readyRead()), this, SLOT(onReceivedData()));
+    setup();
 }
 
 void Connection::onReceivedData() {
